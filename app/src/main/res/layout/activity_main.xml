@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="24dp">
+    <TextView
+        android:id="@+id/tvHome"
+        android:text="@string/title_home"
+        android:textSize="50sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="24dp"/>
+
+    <Button
+        android:background="#00000000"
+        android:id="@+id/btNew"
+        android:text="@string/btNew"
+        android:textSize="20sp"
+        android:textColor="#333333"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_margin="8dp"/>
+
+    <Button
+        android:background="#00000000"
+        android:id="@+id/btEdit"
+        android:text="@string/btEdit"
+        android:textSize="20sp"
+        android:textColor="#333333"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_margin="8dp"/>
+</LinearLayout>
+</layout>
