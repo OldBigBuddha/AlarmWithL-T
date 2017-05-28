@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -7,11 +8,11 @@
     android:layout_margin="24dp">
     <TextView
         android:id="@+id/tvHome"
-        android:text="@string/title_home"
         android:textSize="50sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="24dp"/>
+        android:padding="24dp"
+        app:htmlText="@{string/title_home}"/>
 
     <Button
         android:background="#00000000"
