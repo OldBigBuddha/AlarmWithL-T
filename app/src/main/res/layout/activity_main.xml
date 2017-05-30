@@ -1,39 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<LinearLayout
+
+    <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="24dp">
+    android:background="@color/colorBackground">
+
     <TextView
         android:id="@+id/tvHome"
         android:textSize="50sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="24dp"
-        app:htmlText="@{string/title_home}"/>
+        android:layout_margin="12dp"/>
 
     <Button
-        android:background="#00000000"
+        android:background="@drawable/shape_rouded_corners_30dp"
         android:id="@+id/btNew"
         android:text="@string/btNew"
         android:textSize="20sp"
         android:textColor="#333333"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:layout_margin="8dp"/>
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginLeft="24dp"/>
 
     <Button
-        android:background="#00000000"
+        android:background="@drawable/shape_rouded_corners_30dp"
         android:id="@+id/btEdit"
         android:text="@string/btEdit"
         android:textSize="20sp"
         android:textColor="#333333"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:layout_margin="8dp"/>
+        android:layout_marginRight="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/dummy"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="0dp"
+            android:gravity="center"
+            android:text="Ads"
+            android:textSize="35dp"
+            android:background="#0f0f0f"
+            android:textColor="#f0f0f0"/>
+
 </LinearLayout>
 </layout>
