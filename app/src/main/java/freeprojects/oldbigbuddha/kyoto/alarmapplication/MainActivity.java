@@ -1,11 +1,14 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.View;
 import android.widget.TextView;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityMainBinding;
@@ -17,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ActivityMainBinding binding = DataBindingUtil.setContentView( this, R.layout.activity_main );
-        String text = getString( R.string.title_home );
-        binding.tvHome.setText( fromhtml( text ) );
+        binding.setViewModel( new MainViewModel() );
+        binding.setTitle( getString( R.string.title_home ) );
     }
 
     @BindingAdapter("htmlText")
@@ -36,4 +39,10 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
+
+    public void onClickToNewCreate(View view) {
+        Intent intent = new Intent( MainActivity.this, NewCreateActivity.class );
+        startActivity( intent );
+    }
+
 }
