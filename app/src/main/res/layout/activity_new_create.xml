@@ -52,7 +52,7 @@
             android:id="@+id/google_map_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name= "com.google.android.gms.maps.MapFragment"/>
+            android:name="com.google.android.gms.maps.MapFragment"/>
     </LinearLayout>
 
 </LinearLayout>
