@@ -28,12 +28,12 @@
         <activity android:name=".NewCreateActivity"></activity>
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="2293250576e7d79f02e688f74f925d5905be4928" />
+            android:value="@string/fabric" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB5KnTHxG0gK_-IFm1A732o_zd-B-SuJTs"/>
+            android:value="@string/google_geo"/>
     </application>
 </manifest>
