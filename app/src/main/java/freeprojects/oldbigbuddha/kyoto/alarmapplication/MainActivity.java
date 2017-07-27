@@ -12,12 +12,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityMainBinding;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         ActivityMainBinding binding = DataBindingUtil.setContentView( this, R.layout.activity_main );
         binding.setViewModel( new MainViewModel() );
@@ -38,11 +41,6 @@ public class MainActivity extends AppCompatActivity {
             result = Html.fromHtml(html);
         }
         return result;
-    }
-
-    public void onClickToNewCreate(View view) {
-        Intent intent = new Intent( MainActivity.this, NewCreateActivity.class );
-        startActivity( intent );
     }
 
 }
