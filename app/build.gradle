@@ -33,6 +33,6 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.google.android.gms:play-services-maps:10.2.6'
     compile 'com.google.android.gms:play-services-places:10.2.6'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.github.chuross:expandable-layout:1.0.5'
     testCompile 'junit:junit:4.12'
 }

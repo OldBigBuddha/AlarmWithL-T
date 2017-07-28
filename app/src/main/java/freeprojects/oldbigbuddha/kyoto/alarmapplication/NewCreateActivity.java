@@ -48,7 +48,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         marker.icon(BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_GREEN ));
         googleMap.addMarker( marker );
 
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom( latLng, 11 ));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom( latLng, 17 ));
     }
 
     @Override
