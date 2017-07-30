@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
-import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -20,12 +19,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import net.cachapa.expandablelayout.ExpandableLayout;
+
 public class NewCreateActivity extends AppCompatActivity implements PlaceSelectionListener, OnMapReadyCallback {
 
     private GoogleMap googleMap;
 
     private Switch mSwitchData, mSwitchLocation;
-    private ExpandableLinearLayout mExpandableData, mExpandableLocation;
+    private ExpandableLayout mExpandableDate, mExpandableLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,43 +34,34 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         setContentView(R.layout.activity_new_create);
 
         mSwitchData = (Switch)findViewById(R.id.switch_data);
-        mSwitchLocation = (Switch)findViewById(R.id.switch_location);
-        mExpandableData = (ExpandableLinearLayout)findViewById(R.id.expand_date_setting_linear);
-        mExpandableLocation = (ExpandableLinearLayout)findViewById(R.id.expand_location_setting_linear);
-
-        Log.d("mSwitchData", mSwitchData.isChecked() + "");
-        Log.d("mSwitchLocation", mSwitchLocation.isChecked() + "");
-
-
         mSwitchData.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d("DataOnCheckedChange", isChecked + "");
-//                changeStatus(buttonView, isChecked);
-                if (isChecked) {
-                    mExpandableData.expand();
-                    mSwitchData.setChecked( true );
-                } else {
-                    mExpandableData.collapse();
-                    mSwitchData.setChecked( false );
-                }
-                Log.d("DataOnCheckedChange", isChecked + "");
+                mSwitchData.setChecked( isChecked );
+                mExpandableDate.toggle();
+            }
+        });
+        mExpandableDate = (ExpandableLayout)findViewById(R.id.expand_date);
+        mExpandableDate.setOnExpansionUpdateListener(new ExpandableLayout.OnExpansionUpdateListener() {
+            @Override
+            public void onExpansionUpdate(float expansionFraction, int state) {
+                Log.d("ExpandableDate", "State: " + state);
             }
         });
 
+        mSwitchLocation = (Switch)findViewById(R.id.switch_location);
         mSwitchLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d("LocationOnCheckedChange", isChecked + "");
-//                changeStatus(buttonView, isChecked);
-                if (isChecked) {
-                    mExpandableLocation.expand();
-                    mSwitchLocation.setChecked( true );
-                } else {
-                    mExpandableLocation.collapse();
-                    mSwitchLocation.setChecked( false );
-                }
-                Log.d("LocationOnCheckedChange", isChecked + "");
+                mSwitchLocation.setChecked( isChecked );
+                mExpandableLocation.toggle();
+            }
+        });
+        mExpandableLocation = (ExpandableLayout)findViewById(R.id.expand_location);
+        mExpandableLocation.setOnExpansionUpdateListener(new ExpandableLayout.OnExpansionUpdateListener() {
+            @Override
+            public void onExpansionUpdate(float expansionFraction, int state) {
+                Log.d("ExpandableLocation", "State: " + state);
             }
         });
 
@@ -107,13 +99,4 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         this.googleMap = googleMap;
     }
 
-    public void changeStatus(CompoundButton button, boolean isChecked) {
-        if (isChecked) {
-            mExpandableData.collapse();
-            button.setChecked( true );
-        } else {
-            mExpandableData.expand();
-            button.setChecked( false );
-        }
-    }
 }

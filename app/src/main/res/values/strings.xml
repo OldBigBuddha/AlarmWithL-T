@@ -5,4 +5,12 @@
     <string name="btEdit">確認・編集</string>
     <string name="title">タイトル</string>
     <string name="content">内容</string>
+
+    <string name="header_location">Location</string>
+    <string name="header_date">Date</string>
+
+    <string name="data">Date</string>
+    <string name="time">Time</string>
+
+    <string name="btAdd">Add</string>
 </resources>
