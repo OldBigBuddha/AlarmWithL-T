@@ -91,7 +91,7 @@
                 <fragment
                     android:id="@+id/google_map_fragment"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="300dp"
                     android:name="com.google.android.gms.maps.MapFragment"/>
             </LinearLayout>
             </net.cachapa.expandablelayout.ExpandableLayout>
@@ -169,7 +169,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:background="#000000ff"
-                    android:layout_gravity="right"/>
+                    android:layout_gravity="right"/>https://github.com/OldBigBuddha/AlarmWithL-T
             </LinearLayout>
 
             <LinearLayout
@@ -178,7 +178,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginLeft="24dp">
+                android:layout_marginLeft="24dp"
+                android:layout_marginBottom="32dp">
                 <TextView
                     android:text="@string/time"
                     android:textSize="22sp"
@@ -211,9 +212,8 @@
             </LinearLayout>
 
 
-        </LinearLayout>
+            </LinearLayout>
             </net.cachapa.expandablelayout.ExpandableLayout>
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
