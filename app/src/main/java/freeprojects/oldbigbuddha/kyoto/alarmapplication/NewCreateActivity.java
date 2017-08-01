@@ -3,7 +3,10 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
@@ -21,6 +24,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
+import permissions.dispatcher.RuntimePermissions;
+
+//@RuntimePermissions
 public class NewCreateActivity extends AppCompatActivity implements PlaceSelectionListener, OnMapReadyCallback {
 
     private GoogleMap googleMap;
@@ -32,6 +38,8 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_create);
+
+        initToolbar();
 
         mSwitchData = (Switch)findViewById(R.id.switch_data);
         mSwitchData.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -99,4 +107,27 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         this.googleMap = googleMap;
     }
 
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.new_create_menu, menu);
+        return true;
+    }
 }

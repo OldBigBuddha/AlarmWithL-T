@@ -12,6 +12,7 @@ public class AlarmRealmData extends RealmObject {
     @PrimaryKey
     private String alarmData;
 
+
     public String getAlarmData() {
         return alarmData;
     }

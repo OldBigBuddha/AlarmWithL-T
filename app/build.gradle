@@ -21,6 +21,9 @@ android {
     dataBinding {
         enabled = true
     }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+    }
 }
 
 dependencies {
@@ -33,8 +36,13 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.google.android.gms:play-services-maps:10.2.6'
     compile 'com.google.android.gms:play-services-places:10.2.6'
+    compile 'com.google.android.gms:play-services-location:9.6.1'
     compile 'net.cachapa.expandablelayout:expandablelayout:2.9.1'
-    //    compile 'com.github.aakira:expandable-layout:1.6.0@aar'
-//    compile 'com.github.chuross:expandable-layout:1.0.5'
+
+    compile("com.github.hotchemi:permissionsdispatcher:2.4.0") {
+        exclude module: "support-v13"
+    }
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:2.4.0"
+
     testCompile 'junit:junit:4.12'
 }
