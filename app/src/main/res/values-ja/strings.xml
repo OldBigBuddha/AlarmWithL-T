@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LATE</string>
+    <string name="data">日付</string>
+    <string name="title">タイトル</string>
+    <string name="btEdit">確認・編集</string>
+    <string name="btNew">新規作成</string>
+    <string name="content">内容</string>
+    <string name="header_location">ロケーション</string>
+    <string name="header_schedule">日時</string>
+    <string name="time">時間</string>
+    <string name="btAdd">追加</string>
+</resources>

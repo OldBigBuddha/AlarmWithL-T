@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">LATE</string>
     <string name="title_home">&lt;font color=\"#0086CC\"&gt;L&lt;/font&gt;ocation&lt;br&gt;&lt;font color=\"#ECDF2B\"&gt;A&lt;/font&gt;nd&lt;br&gt;&lt;font color=\"#AD002D\"&gt;T&lt;/font&gt;im&lt;font color=\"#005E15\"&gt;E&lt;/font&gt;</string>
-    <string name="btNew">新規作成</string>
-    <string name="btEdit">確認・編集</string>
-    <string name="title">タイトル</string>
-    <string name="content">内容</string>
+    <string name="btNew">New</string>
+    <string name="btEdit">Check &amp; Edit</string>
+    <string name="title">Title</string>
+    <string name="content">Content</string>
 
     <string name="header_location">Location</string>
     <string name="header_schedule">Schedule</string>
