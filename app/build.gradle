@@ -32,17 +32,18 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:recyclerview-v7'
+
+    compile("com.github.hotchemi:permissionsdispatcher:2.4.0") {
+        exclude module: "support-v13"
+    }
+
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.google.android.gms:play-services-maps:10.2.6'
     compile 'com.google.android.gms:play-services-places:10.2.6'
     compile 'com.google.android.gms:play-services-location:9.6.1'
     compile 'net.cachapa.expandablelayout:expandablelayout:2.9.1'
-
-    compile("com.github.hotchemi:permissionsdispatcher:2.4.0") {
-        exclude module: "support-v13"
-    }
-    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:2.4.0"
-
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
 }

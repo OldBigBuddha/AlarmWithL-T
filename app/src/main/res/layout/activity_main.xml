@@ -16,7 +16,7 @@
     android:background="@color/colorBackground">
 
     <TextView
-        android:id="@+id/tvHome"
+        android:id="@+id/tv_home"
         android:textSize="50sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,8 +26,8 @@
 
     <Button
         android:background="@drawable/shape_rouded_corners_30dp"
-        android:id="@+id/btNew"
-        android:text="@string/btNew"
+        android:id="@+id/bt_new"
+        android:text="@string/bt_new"
         android:textSize="20sp"
         android:textColor="#333333"
         android:layout_width="match_parent"
@@ -40,8 +40,8 @@
 
     <Button
         android:background="@drawable/shape_rouded_corners_30dp"
-        android:id="@+id/btEdit"
-        android:text="@string/btEdit"
+        android:id="@+id/bt_edit"
+        android:text="@string/bt_edit"
         android:textSize="20sp"
         android:textColor="#333333"
         android:layout_width="match_parent"

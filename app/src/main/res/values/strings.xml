@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">LATE</string>
     <string name="title_home">&lt;font color=\"#0086CC\"&gt;L&lt;/font&gt;ocation&lt;br&gt;&lt;font color=\"#ECDF2B\"&gt;A&lt;/font&gt;nd&lt;br&gt;&lt;font color=\"#AD002D\"&gt;T&lt;/font&gt;im&lt;font color=\"#005E15\"&gt;E&lt;/font&gt;</string>
-    <string name="btNew">New</string>
-    <string name="btEdit">Check &amp; Edit</string>
+    <string name="bt_new">New</string>
+    <string name="bt_edit">Check &amp; Edit</string>
     <string name="title">Title</string>
     <string name="content">Content</string>
 
@@ -13,5 +13,10 @@
     <string name="data">Date</string>
     <string name="time">Time</string>
 
-    <string name="btAdd">Add</string>
+    <string name="bt_add">Add</string>
+    <string name="bt_set_date">set</string>
+    <string name="title_date_dialog">Date</string>
+    <string name="dialog_date_set">set</string>
+    <string name="message_error_null_title">Title is Empty.</string>
+    <string name="message_error_null_context">Content is empty.</string>
 </resources>

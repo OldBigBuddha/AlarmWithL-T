@@ -3,11 +3,16 @@
     <string name="app_name">LATE</string>
     <string name="data">日付</string>
     <string name="title">タイトル</string>
-    <string name="btEdit">確認・編集</string>
-    <string name="btNew">新規作成</string>
+    <string name="bt_edit">確認・編集</string>
+    <string name="bt_new">新規作成</string>
     <string name="content">内容</string>
-    <string name="header_location">ロケーション</string>
+    <string name="header_location">場所</string>
     <string name="header_schedule">日時</string>
     <string name="time">時間</string>
-    <string name="btAdd">追加</string>
+    <string name="bt_add">追加</string>
+    <string name="bt_set_date">決定</string>
+    <string name="title_date_dialog">日付</string>
+    <string name="dialog_date_set">決定</string>
+    <string name="message_error_null_title">タイトルが空です</string>
+    <string name="message_error_null_context">内容が空です</string>
 </resources>

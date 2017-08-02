@@ -1,16 +1,26 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
+import java.util.Calendar;
+import java.util.Date;
 
+import android.databinding.DataBindingUtil;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.widget.EditText;
+import android.widget.TextView;
+
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -24,49 +34,42 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
-import permissions.dispatcher.RuntimePermissions;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
+import io.realm.Realm;
 
 //@RuntimePermissions
 public class NewCreateActivity extends AppCompatActivity implements PlaceSelectionListener, OnMapReadyCallback {
 
+    private static final String TAG = "NewCreateActivity";
+
+    private ActivityNewCreateBinding mBinding;
+
     private GoogleMap googleMap;
 
-    private Switch mSwitchData, mSwitchLocation;
-    private ExpandableLayout mExpandableDate, mExpandableLocation;
+    private String mTitle, mContent;
+    private Date mSchedule;
+    private Geofence mGeofence;
+
+    private Realm mRealm;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_create);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);
+        mBinding.setVm( new NewCreateViewModel(mBinding));
 
         initToolbar();
 
-        mSwitchData = (Switch)findViewById(R.id.switch_data);
-        mSwitchData.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mSwitchData.setChecked( isChecked );
-                mExpandableDate.toggle();
-            }
-        });
-        mExpandableDate = (ExpandableLayout)findViewById(R.id.expand_date);
-        mExpandableDate.setOnExpansionUpdateListener(new ExpandableLayout.OnExpansionUpdateListener() {
+        mBinding.expandDate.setOnExpansionUpdateListener(new ExpandableLayout.OnExpansionUpdateListener() {
             @Override
             public void onExpansionUpdate(float expansionFraction, int state) {
                 Log.d("ExpandableDate", "State: " + state);
             }
         });
 
-        mSwitchLocation = (Switch)findViewById(R.id.switch_location);
-        mSwitchLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mSwitchLocation.setChecked( isChecked );
-                mExpandableLocation.toggle();
-            }
-        });
-        mExpandableLocation = (ExpandableLayout)findViewById(R.id.expand_location);
-        mExpandableLocation.setOnExpansionUpdateListener(new ExpandableLayout.OnExpansionUpdateListener() {
+        mBinding.expandLocation.setOnExpansionUpdateListener(new ExpandableLayout.OnExpansionUpdateListener() {
             @Override
             public void onExpansionUpdate(float expansionFraction, int state) {
                 Log.d("ExpandableLocation", "State: " + state);
@@ -79,6 +82,14 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.google_map_fragment);
         mapFragment.getMapAsync(this);
+
+        mRealm = Realm.getDefaultInstance();
+        mTitle = "";
+        mContent = "";
+        mSchedule = null;
+        mGeofence = null;
+
+        Log.d(TAG,"onCreate");
 
     }
 
@@ -108,10 +119,11 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     }
 
     private void initToolbar() {
-        Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        Toolbar toolbar = mBinding.toolBar;
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -129,5 +141,41 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.new_create_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        String title, context;
+        View parent = mBinding.parentLayout;
+        switch (item.getItemId()) {
+            case R.id.create_menu: {
+                if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) {
+                    title = mBinding.etTitle.getText().toString();
+                    context = mBinding.etContext.getText().toString();
+                    AlarmRealmData data = new AlarmRealmData(title, context);
+                    if (mSchedule != null) data.setDate(mSchedule);
+                    saveData(data);
+                    mBinding.etTitle.setText("");
+                    mBinding.etContext.setText("");
+                } else if (TextUtils.isEmpty(mBinding.etTitle.getText())) {
+                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_title) ,Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                } else if (TextUtils.isEmpty(mBinding.etContext.getText())) {
+                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_context) ,Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }
+
+
+
+            }
+        }
+        Log.d(TAG, "Selected Menu Item");
+        return true;
+    }
+
+    public void saveData(AlarmRealmData data) {
+        mRealm.beginTransaction();
+        mRealm.copyToRealm(data);
+        mRealm.commitTransaction();
     }
 }

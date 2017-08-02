@@ -1,236 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
-<LinearLayout
-    android:background="@color/colorBackground"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout>
+    <data>
+        <variable
+            name="vm"
+            type="freeprojects.oldbigbuddha.kyoto.alarmapplication.NewCreateViewModel" />
+    </data>
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary">
-
-    </android.support.v7.widget.Toolbar>
     <LinearLayout
-        android:orientation="vertical"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/parentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp">
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:layout_marginTop="6dp">
-        <EditText
-            android:id="@+id/etTitle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/title"/>
-    </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:layout_marginTop="6dp">
-        <EditText
-            android:id="@+id/etText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/content"/>
-    </android.support.design.widget.TextInputLayout>
+        android:background="@color/colorBackground"
+        android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+        </android.support.v7.widget.Toolbar>
+
         <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp">
-
-            <!--location header-->
-            <LinearLayout
-                android:id="@+id/location_header_linear"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@mipmap/ic_location"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:gravity="center"/>
-
-                <Switch
-                    android:id="@+id/switch_location"
-                    android:text="@string/header_location"
-                    android:textSize="28sp"
-                    android:textColor="#000"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:checked="false"/>
-
-
-            </LinearLayout>
-
-            <net.cachapa.expandablelayout.ExpandableLayout
-                android:id="@+id/expand_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:el_expanded="false">
-                <!--location setting-->
-                <LinearLayout
-                android:id="@+id/setting_location_linear"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <fragment
-                    android:id="@+id/place_autocomplete_fragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment" />
-
-                <fragment
-                    android:id="@+id/google_map_fragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:name="com.google.android.gms.maps.MapFragment"/>
-            </LinearLayout>
-            </net.cachapa.expandablelayout.ExpandableLayout>
-
-            <!--date header-->
-            <LinearLayout
-                android:id="@+id/date_header_linear"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:src="@mipmap/ic_date"
-                    android:gravity="center"/>
-
-                <Switch
-                    android:id="@+id/switch_data"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/header_schedule"
-                    android:textSize="28sp"
-                    android:textColor="#000"
-                    android:gravity="center"
-                    android:padding="8dp"/>
-            </LinearLayout>
-
-            <net.cachapa.expandablelayout.ExpandableLayout
-                android:id="@+id/expand_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:el_expanded="false">
-                <!--date setting-->
-            <LinearLayout
-            android:id="@+id/setting_date_linear"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:id="@+id/setting_date_date"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:paddingLeft="36dp"
-                android:gravity="center">
-                <TextView
-                    android:text="@string/data"
-                    android:textSize="20sp"
-                    android:textColor="#000"
-                    android:layout_weight="2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"/>
+                android:layout_marginTop="6dp"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp">
 
-                <TextView
-                    android:id="@+id/tvDate"
-                    android:text="XXXX/XX/XX"
-                    android:textSize="18sp"
-                    android:textColor="#000"
-                    android:layout_weight="3"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"/>
+                <EditText
+                    android:id="@+id/etTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/title" />
+            </android.support.design.widget.TextInputLayout>
 
-                <ImageButton
-                    android:id="@+id/btAddDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:src="@mipmap/ic_add"
-                    android:background="#00000000"
-                    android:layout_margin="4dp"/>
-            </LinearLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp">
 
+                <EditText
+                    android:id="@+id/etContext"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/content" />
+            </android.support.design.widget.TextInputLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:id="@+id/setting_date_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="36dp"
-                    android:gravity="center">
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:text="@string/time"
-                        android:textSize="20sp"
-                        android:textColor="#000"
-                        android:layout_weight="2"
-                        android:gravity="left"/>
+                    android:layout_margin="16dp"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvTime"
-                        android:text="YY:YY"
-                        android:textSize="18sp"
-                        android:textColor="#000"
-                        android:layout_weight="4"
-                        android:layout_width="0dp"
+                    <!--location header-->
+                    <LinearLayout
+                        android:id="@+id/location_header_linear"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"/>
+                        android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/btAddTime"
-                        android:layout_width="wrap_content"
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_marginTop="4dp"
+                            android:gravity="center"
+                            android:src="@mipmap/ic_location" />
+
+                        <Switch
+                            android:id="@+id/switch_location"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:gravity="center"
+                            android:onCheckedChanged="@{vm::getCheckLocation}"
+                            android:padding="8dp"
+                            android:text="@string/header_location"
+                            android:textColor="#000"
+                            android:textSize="28sp" />
+
+
+                    </LinearLayout>
+
+                    <net.cachapa.expandablelayout.ExpandableLayout
+                        android:id="@+id/expand_location"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        android:src="@mipmap/ic_add"
-                        android:background="#00000000"
-                        android:layout_margin="4dp"/>
+                        app:el_expanded="true">
+                        <!--location setting-->
+                        <LinearLayout
+                            android:id="@+id/setting_location_linear"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <fragment
+                                android:id="@+id/place_autocomplete_fragment"
+                                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                            <fragment
+                                android:id="@+id/google_map_fragment"
+                                android:name="com.google.android.gms.maps.MapFragment"
+                                android:layout_width="match_parent"
+                                android:layout_height="200dp" />
+                        </LinearLayout>
+                    </net.cachapa.expandablelayout.ExpandableLayout>
+
+                    <!--date header-->f
+                    <LinearLayout
+                        android:id="@+id/date_header_linear"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_marginTop="4dp"
+                            android:gravity="center"
+                            android:src="@mipmap/ic_date" />
+
+                        <Switch
+                            android:id="@+id/switch_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:onCheckedChanged="@{vm::getCheckDate}"
+                            android:padding="8dp"
+                            android:text="@string/header_schedule"
+                            android:textColor="#000"
+                            android:textSize="28sp" />
+                    </LinearLayout>
+
+                    <net.cachapa.expandablelayout.ExpandableLayout
+                        android:id="@+id/expand_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:el_expanded="false">
+                        <!--date setting-->
+                        <LinearLayout
+                            android:id="@+id/setting_date_linear"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:id="@+id/setting_date_date"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="horizontal"
+                                android:paddingBottom="4dp"
+                                android:paddingLeft="36dp"
+                                android:paddingTop="4dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="2"
+                                    android:gravity="left"
+                                    android:text="@string/data"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:id="@+id/tvDate"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="3"
+                                    android:gravity="center"
+                                    android:text="XXXX/XX/XX"
+                                    android:textColor="#000"
+                                    android:textSize="18sp" />
+
+                                <ImageButton
+                                    android:id="@+id/btAddDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:layout_margin="4dp"
+                                    android:background="#00000000"
+                                    android:src="@mipmap/ic_add" />
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:id="@+id/setting_date_time"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="horizontal"
+                                android:paddingBottom="4dp"
+                                android:paddingLeft="36dp"
+                                android:paddingTop="4dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="2"
+                                    android:gravity="left"
+                                    android:text="@string/time"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:id="@+id/tvTime"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="4"
+                                    android:gravity="center"
+                                    android:text="YY:YY"
+                                    android:textColor="#000"
+                                    android:textSize="18sp" />
+
+                                <ImageButton
+                                    android:id="@+id/btAddTime"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:layout_margin="4dp"
+                                    android:background="#00000000"
+                                    android:src="@mipmap/ic_add" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </net.cachapa.expandablelayout.ExpandableLayout>
                 </LinearLayout>
-
-            </LinearLayout>
-            </net.cachapa.expandablelayout.ExpandableLayout>
+            </ScrollView>
         </LinearLayout>
-    </ScrollView>
     </LinearLayout>
-</LinearLayout>
 </layout>
