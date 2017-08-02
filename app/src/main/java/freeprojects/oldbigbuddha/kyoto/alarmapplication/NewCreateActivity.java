@@ -157,6 +157,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                     saveData(data);
                     mBinding.etTitle.setText("");
                     mBinding.etContext.setText("");
+                    onBackPressed();
                 } else if (TextUtils.isEmpty(mBinding.etTitle.getText())) {
                     Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_title) ,Snackbar.LENGTH_SHORT);
                     snackbar.show();
@@ -164,9 +165,10 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                     Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_context) ,Snackbar.LENGTH_SHORT);
                     snackbar.show();
                 }
-
-
-
+                break;
+            }
+            default: {
+                onBackPressed();
             }
         }
         Log.d(TAG, "Selected Menu Item");
@@ -176,6 +178,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     public void saveData(AlarmRealmData data) {
         mRealm.beginTransaction();
         mRealm.copyToRealm(data);
+        Log.d("Realm", "saved");
         mRealm.commitTransaction();
     }
 }

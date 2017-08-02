@@ -16,4 +16,10 @@ public class MainViewModel {
         context.startActivity( intent );
     }
 
+    public void onClickToShowData(View view) {
+        Context context = view.getContext();
+        Intent intent = new Intent( context, ShowDataActivity.class);
+        context.startActivity(intent);
+    }
+
 }
