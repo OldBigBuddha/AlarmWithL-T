@@ -1,6 +1,7 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -22,8 +23,11 @@ public class NewCreateViewModel {
     private Activity mActivity;
 
 
-    public NewCreateViewModel(ActivityNewCreateBinding binding) {
+
+
+    public NewCreateViewModel(ActivityNewCreateBinding binding, Activity activity) {
         mBinding = binding;
+        mActivity = activity;
     }
 
     public void getCheckDate(CompoundButton button, boolean isChecked) {
@@ -41,7 +45,9 @@ public class NewCreateViewModel {
     }
 
     public void onAddSchedule(View view) {
-        DateDialogFragment fragment = new DateDialogFragment();
+        DateDialogFragment fragment = DateDialogFragment.newInstance();
+
+
     }
 
 }

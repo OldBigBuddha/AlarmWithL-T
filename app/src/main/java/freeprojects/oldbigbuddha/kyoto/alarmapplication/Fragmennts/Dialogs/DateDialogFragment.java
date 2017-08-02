@@ -19,14 +19,11 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
 
 public class DateDialogFragment extends DialogFragment {
 
-    private DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-
-        }
-    };
-
     public DateDialogFragment() {}
+
+    public static DateDialogFragment newInstance() {
+        return new DateDialogFragment();
+    }
 
     @Override
     public void onPause() {
@@ -44,9 +41,22 @@ public class DateDialogFragment extends DialogFragment {
         builder.setView(content);
 
         builder.setTitle( getString(R.string.title_date_dialog))
-        .setPositiveButton(getString(R.string.dialog_date_set), clickListener)
+        .setPositiveButton(getString(R.string.dialog_date_set), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        })
+        .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        })
         .show();
 
-        return super.onCreateDialog(savedInstanceState);
+        return builder.create();
     }
 }

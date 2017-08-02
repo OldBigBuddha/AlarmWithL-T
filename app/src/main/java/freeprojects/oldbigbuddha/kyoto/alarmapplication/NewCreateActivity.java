@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.DateDialogFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
 import io.realm.Realm;
@@ -53,29 +54,17 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
     private Realm mRealm;
 
+    private Toolbar mToolbar;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);
-        mBinding.setVm( new NewCreateViewModel(mBinding));
+        mBinding.setVm( new NewCreateViewModel(mBinding, this));
 
         initToolbar();
-
-        mBinding.expandDate.setOnExpansionUpdateListener(new ExpandableLayout.OnExpansionUpdateListener() {
-            @Override
-            public void onExpansionUpdate(float expansionFraction, int state) {
-                Log.d("ExpandableDate", "State: " + state);
-            }
-        });
-
-        mBinding.expandLocation.setOnExpansionUpdateListener(new ExpandableLayout.OnExpansionUpdateListener() {
-            @Override
-            public void onExpansionUpdate(float expansionFraction, int state) {
-                Log.d("ExpandableLocation", "State: " + state);
-            }
-        });
-
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         autocompleteFragment.setOnPlaceSelectedListener(this);
@@ -119,9 +108,9 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     }
 
     private void initToolbar() {
-        Toolbar toolbar = mBinding.toolBar;
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.tool_bar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -182,4 +171,24 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         Log.d("toString", data.toString());
         mRealm.commitTransaction();
     }
+
+    public void getCheckDate(CompoundButton button, boolean isChecked) {
+        mBinding.switchDate.setChecked( isChecked );
+        mBinding.expandDate.toggle();
+        Log.d("Date", isChecked + "");
+        Log.d("Location", mBinding.switchLocation.isChecked() + "");
+    }
+
+    public void getCheckLocation(CompoundButton button, boolean isChecked) {
+        mBinding.switchLocation.setChecked( isChecked );
+        mBinding.expandLocation.toggle();
+        Log.d("Location", isChecked + "");
+        Log.d("Date", mBinding.switchDate.isChecked() + "");
+    }
+
+    public void onAddSchedule(View view) {
+        DateDialogFragment fragment = DateDialogFragment.newInstance();
+
+    }
+
 }
