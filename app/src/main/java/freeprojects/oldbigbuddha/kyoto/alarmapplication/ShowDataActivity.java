@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Adapters.CustomRecyclerAdapter;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityShowDataBinding;
@@ -17,6 +20,7 @@ public class ShowDataActivity extends AppCompatActivity {
 
     private Realm mRealm;
     private RealmResults<AlarmRealmData> mResults;
+    private List<String> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,9 @@ public class ShowDataActivity extends AppCompatActivity {
 
         mRealm = Realm.getDefaultInstance();
         mResults = mRealm.where(AlarmRealmData.class).findAll();
+//        for (int i = 0;i < 20; i++) {
+//            list.add("" + (i + 1) );
+//        }
 
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);

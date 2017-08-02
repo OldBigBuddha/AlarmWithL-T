@@ -43,7 +43,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
     private static final String TAG = "NewCreateActivity";
 
-    private ActivityNewCreateBinding mBinding;
+    ActivityNewCreateBinding mBinding;
 
     private GoogleMap googleMap;
 
@@ -179,6 +179,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         mRealm.beginTransaction();
         mRealm.copyToRealm(data);
         Log.d("Realm", "saved");
+        Log.d("toString", data.toString());
         mRealm.commitTransaction();
     }
 }

@@ -4,10 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.BR;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.MainActivity;
@@ -23,11 +30,17 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
 
     private RealmResults<AlarmRealmData> mResults;
     private Context mContext;
+    private List<String> list;
 
     public CustomRecyclerAdapter(RealmResults<AlarmRealmData> results, Context context) {
         mResults = results;
         mContext = context;
     }
+//
+//    public CustomRecyclerAdapter(List<String> list ,Context context) {
+//        this.list = list;
+//        mContext = context;
+//    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -38,30 +51,34 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         AlarmRealmData data = mResults.get(position);
-        holder.binding.setVariable(BR.data, data);
-        holder.binding.executePendingBindings();
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        Log.d("toString", data.toString());
+        holder.tvIndex.setText( (position + 1) + "");
+        holder.tvTitle.setText(data.getTitle());
+        holder.ibEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, MainActivity.class);
-                mContext.startActivity(intent);
+                Toast.makeText(mContext, "ItemClicked", Toast.LENGTH_SHORT).show();
             }
         });
-//       holder.binding.tvTitle.setText(position + "");
-//        holder.tvContext.setText(data.getContext());
     }
 
     @Override
     public int getItemCount() {
+//        return list.size();
         return mResults.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        public ViewDataBinding binding;
+
+        public TextView tvIndex;
+        public TextView tvTitle;
+        public ImageButton ibEdit;
 
         public ViewHolder(View view) {
             super(view);
-            DataBindingUtil.bind(view);
+            tvIndex = (TextView)view.findViewById(R.id.tv_index);
+            tvTitle = (TextView)view.findViewById(R.id.tv_title);
+            ibEdit  = (ImageButton)view.findViewById(R.id.ib_edit_data);
         }
     }
 }

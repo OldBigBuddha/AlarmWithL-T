@@ -13,14 +13,14 @@ public class AlarmRealmData extends RealmObject {
 
     private int geofenceId;
     private String title;
-    private String context;
+    private String content;
     private Date date;
 
     public AlarmRealmData() {}
 
     public AlarmRealmData(String title, String context) {
         this.title = title;
-        this.context = context;
+        this.content = context;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class AlarmRealmData extends RealmObject {
 
         if (geofenceId != that.geofenceId) return false;
         if (!title.equals(that.title)) return false;
-        if (!context.equals(that.context)) return false;
+        if (!content.equals(that.content)) return false;
         return date != null ? date.equals(that.date) : that.date == null;
 
     }
@@ -41,7 +41,7 @@ public class AlarmRealmData extends RealmObject {
     public String toString() {
         return "AlarmRealmData{" +
                 "title='" + title + '\'' +
-                ", context='" + context + '\'' +
+                ", content='" + content + '\'' +
                 '}';
     }
 
@@ -49,7 +49,7 @@ public class AlarmRealmData extends RealmObject {
     public int hashCode() {
         int result = geofenceId;
         result = 31 * result + title.hashCode();
-        result = 31 * result + context.hashCode();
+        result = 31 * result + content.hashCode();
         result = 31 * result + (date != null ? date.hashCode() : 0);
         return result;
     }
@@ -70,12 +70,12 @@ public class AlarmRealmData extends RealmObject {
         this.title = title;
     }
 
-    public String getContext() {
-        return context;
+    public String getContent() {
+        return content;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Date getDate() {
