@@ -16,11 +16,23 @@ public class AlarmRealmData extends RealmObject {
     private String content;
     private Date date;
 
+    public long getmMadeDate() {
+        return mMadeDate;
+    }
+
+    public void setmMadeDate(long mMadeDate) {
+        this.mMadeDate = mMadeDate;
+    }
+
+    @PrimaryKey
+    private long mMadeDate;
+
     public AlarmRealmData() {}
 
-    public AlarmRealmData(String title, String context) {
+    public AlarmRealmData(String title, String context,long date) {
         this.title = title;
         this.content = context;
+        mMadeDate = date;
     }
 
     @Override

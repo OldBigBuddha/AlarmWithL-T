@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.BR;
@@ -64,8 +65,13 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
 
     @Override
     public int getItemCount() {
-//        return list.size();
         return mResults.size();
+    }
+
+    public void removeItem(int position) {
+        mResults.deleteFromRealm(position);
+        notifyDataSetChanged();
+
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

@@ -38,7 +38,6 @@ public class DateDialogFragment extends DialogFragment {
 
 
 
-
     public void setOnDataFragmentListener(OnDataFragmentListener mListener) {
         this.mListener = mListener;
     }

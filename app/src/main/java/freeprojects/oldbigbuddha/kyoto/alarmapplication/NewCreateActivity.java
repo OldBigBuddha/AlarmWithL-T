@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.logging.SimpleFormatter;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
@@ -87,6 +89,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         initToolbar();
         initOnClick();
         initClient();
+        initMap();
 
         mRealm = Realm.getDefaultInstance();
         mTitle = "";
@@ -95,6 +98,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         mGeofence = null;
 
         mClient.connect();
+
         Log.d(TAG, "onCreate");
 
     }
@@ -158,7 +162,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                 if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) {
                     title = mBinding.etTitle.getText().toString();
                     context = mBinding.etContext.getText().toString();
-                    AlarmRealmData data = new AlarmRealmData(title, context);
+                    AlarmRealmData data = new AlarmRealmData(title, context, System.currentTimeMillis());
                     if (mSchedule != null) data.setDate(mSchedule);
                     saveData(data);
                     mBinding.etTitle.setText("");
@@ -191,17 +195,9 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
     public void initOnClick() {
         mBinding.switchDate.setOnCheckedChangeListener(dataListener);
-//        mBinding.switchLocation.setOnCheckedChangeListener(localeListener);
+        mBinding.switchLocation.setOnCheckedChangeListener(localeListener);
         mBinding.btAddDate.setOnClickListener(onAddSchedule);
     }
-
-//    public void initMap() {
-//        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-//        autocompleteFragment.setOnPlaceSelectedListener(this);
-//
-//        MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.google_map_fragment);
-//        mapFragment.getMapAsync(this);
-//    }
 
     private CompoundButton.OnCheckedChangeListener dataListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
@@ -211,13 +207,13 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         }
     };
 
-//    private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
-//        @Override
-//        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//            mBinding.switchLocation.setChecked( isChecked );
-//            mBinding.expandLocation.toggle();
-//        }
-//    };
+    private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            mBinding.switchLocation.setChecked( isChecked );
+            mBinding.expandLocation.toggle();
+        }
+    };
 
     private View.OnClickListener onAddSchedule = new View.OnClickListener() {
         @Override
@@ -254,7 +250,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         Log.d("OnConnected", "start");
         mGeofence = new Geofence.Builder()
                 .setRequestId(mTitle)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT | Geofence.GEOFENCE_TRANSITION_ENTER)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
                 .setCircularRegion(34.706682, 135.500974, 10)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build();
@@ -318,5 +314,14 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+    }
+
+    public void initMap() {
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        autocompleteFragment.setOnPlaceSelectedListener(this);
+
+        MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.google_map_fragment);
+        mapFragment.getMapAsync(this);
+
     }
  }
