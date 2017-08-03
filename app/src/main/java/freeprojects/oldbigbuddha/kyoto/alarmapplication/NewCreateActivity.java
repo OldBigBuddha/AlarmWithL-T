@@ -3,9 +3,7 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
 
 import android.Manifest;
 import android.app.AlarmManager;
@@ -22,15 +20,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.TextView;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -50,9 +45,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import net.cachapa.expandablelayout.ExpandableLayout;
-
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.DateDialogFragment;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.TimeDialogFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
 import io.realm.Realm;
@@ -70,8 +64,11 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
     private GoogleMap googleMap;
 
+    private boolean isLocation = true;
+    private boolean isDate     = false;
+
     private String mTitle, mContent;
-    private Date mSchedule;
+    private Calendar mSchedule;
     private Geofence mGeofence;
 
     private Realm mRealm;
@@ -79,6 +76,56 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     private Toolbar mToolbar;
 
     private GoogleApiClient mClient;
+
+    private CompoundButton.OnCheckedChangeListener dataListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            mBinding.switchDate.setChecked(isChecked);
+            isDate = !isDate;
+            mBinding.expandDate.toggle();
+        }
+    };
+
+    private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            mBinding.switchLocation.setChecked( isChecked );
+            isLocation = !isLocation;
+            mBinding.expandLocation.toggle();
+        }
+    };
+
+    private View.OnClickListener onAddSchedule = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DateDialogFragment fragment = DateDialogFragment.newInstance();
+            fragment.setOnDataFragmentListener(new DateDialogFragment.OnDataDialogFragmentListener() {
+                @Override
+                public void onClickPositive(int year, int month, int day) {
+                    mSchedule.set(year, month, day);
+                    mBinding.tvDate.setText(formatDate());
+                }
+            });
+            fragment.show(getSupportFragmentManager(), "DataDialogFragment");
+        }
+    };
+
+    private View.OnClickListener onAddTime = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TimeDialogFragment fragment = TimeDialogFragment.newInstance();
+            fragment.setOnTimeDialogFragmentListener(new TimeDialogFragment.OnTimeDialogFragmentListener() {
+                @Override
+                public void onClickPositive(int hour, int minute) {
+                    mSchedule.set(Calendar.HOUR_OF_DAY, hour);
+                    mSchedule.set(Calendar.MINUTE, minute);
+                    mBinding.tvTime.setText(formatTime());
+                }
+            });
+            fragment.show(getSupportFragmentManager(), "TimeDialogFragment");
+        }
+    };
+
 
 
     @Override
@@ -94,13 +141,13 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         mRealm = Realm.getDefaultInstance();
         mTitle = "";
         mContent = "";
-        mSchedule = null;
+        mSchedule = Calendar.getInstance();
         mGeofence = null;
 
-        mClient.connect();
+        mBinding.tvDate.setText(formatDate());
+        mBinding.tvTime.setText(formatTime());
 
-        Log.d(TAG, "onCreate");
-
+//        mClient.connect();
     }
 
     @Override
@@ -142,12 +189,6 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.new_create_menu, menu);
         return true;
@@ -162,8 +203,18 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                 if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) {
                     title = mBinding.etTitle.getText().toString();
                     context = mBinding.etContext.getText().toString();
+
                     AlarmRealmData data = new AlarmRealmData(title, context, System.currentTimeMillis());
-                    if (mSchedule != null) data.setDate(mSchedule);
+                    if (isDate) {
+                        mSchedule.set(Calendar.SECOND, 0);
+                        data.setDate(mSchedule.getTime());
+                        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+                        AlarmManager manager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                        manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), pendingIntent);
+                        Log.d(TAG, "case Date");
+                    }
                     saveData(data);
                     mBinding.etTitle.setText("");
                     mBinding.etContext.setText("");
@@ -181,15 +232,12 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                 onBackPressed();
             }
         }
-        Log.d(TAG, "Selected Menu Item");
         return true;
     }
 
     public void saveData(AlarmRealmData data) {
         mRealm.beginTransaction();
         mRealm.copyToRealm(data);
-        Log.d("Realm", "saved");
-        Log.d("toString", data.toString());
         mRealm.commitTransaction();
     }
 
@@ -197,53 +245,18 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         mBinding.switchDate.setOnCheckedChangeListener(dataListener);
         mBinding.switchLocation.setOnCheckedChangeListener(localeListener);
         mBinding.btAddDate.setOnClickListener(onAddSchedule);
+        mBinding.btAddTime.setOnClickListener(onAddTime);
     }
 
-    private CompoundButton.OnCheckedChangeListener dataListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            mBinding.switchDate.setChecked(isChecked);
-            mBinding.expandDate.toggle();
-        }
-    };
-
-    private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            mBinding.switchLocation.setChecked( isChecked );
-            mBinding.expandLocation.toggle();
-        }
-    };
-
-    private View.OnClickListener onAddSchedule = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.d("AddOnClick", "Clicked");
-            DateDialogFragment fragment = DateDialogFragment.newInstance();
-            fragment.setOnDataFragmentListener(new DateDialogFragment.OnDataFragmentListener() {
-                @Override
-                public void onClickPositive(int year, int month, int day) {
-                    configSchedule(year, month, day);
-                    mBinding.tvDate.setText(formatSchedule());
-                }
-            });
-            fragment.show(getSupportFragmentManager(), "DataDialogFragment");
-        }
-    };
-
-    public void configSchedule(int year, int month, int day) {
-        mSchedule = new Date();
-        mSchedule.setYear(year);
-        mSchedule.setMonth(month);
-        mSchedule.setDate(day);
-    }
-
-    public String formatSchedule() {
+    public String formatDate() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-        return format.format(mSchedule);
-
+        return format.format(mSchedule.getTime());
     }
 
+    public String formatTime() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(mSchedule.getTime());
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -324,4 +337,5 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         mapFragment.getMapAsync(this);
 
     }
+
  }

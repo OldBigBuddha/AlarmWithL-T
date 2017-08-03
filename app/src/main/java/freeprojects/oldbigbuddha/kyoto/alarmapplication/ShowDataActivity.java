@@ -1,5 +1,6 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,10 +25,10 @@ public class ShowDataActivity extends AppCompatActivity {
     private RealmResults<AlarmRealmData> mResults;
     private List<String> list = new ArrayList<>();
 
-    private ItemTouchHelper.Callback callback = new ItemTouchHelper.Callback() {
+    private ItemTouchHelper mHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
         @Override
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            return 0;
+            return makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT);
         }
 
         @Override
@@ -40,9 +41,13 @@ public class ShowDataActivity extends AppCompatActivity {
             int position = viewHolder.getAdapterPosition();
             CustomRecyclerAdapter adapter = (CustomRecyclerAdapter)mBinding.recycler.getAdapter();
             adapter.removeItem(position);
+            adapter.notifyDataSetChanged();
 
+            AlarmRealmData deleteData = mResults.get(position);
+            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+            intent.setType(deleteData.getDate().getTime() + "");
         }
-    };
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,7 @@ public class ShowDataActivity extends AppCompatActivity {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mBinding.recycler.setLayoutManager(manager);
         mBinding.recycler.setAdapter(new CustomRecyclerAdapter(mResults, getApplicationContext()));
-
+        mHelper.attachToRecyclerView(mBinding.recycler);
+        mBinding.recycler.addItemDecoration(mHelper);
     }
 }

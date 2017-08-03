@@ -21,6 +21,7 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.BR;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.MainActivity;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
+import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
@@ -29,6 +30,7 @@ import io.realm.RealmResults;
 
 public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder> {
 
+    private Realm mRealm;
     private RealmResults<AlarmRealmData> mResults;
     private Context mContext;
     private List<String> list;
@@ -45,6 +47,7 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        mRealm = Realm.getDefaultInstance();
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row, parent, false);
         return new ViewHolder(view);
     }
@@ -69,8 +72,10 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
     }
 
     public void removeItem(int position) {
+        mRealm.beginTransaction();
         mResults.deleteFromRealm(position);
         notifyDataSetChanged();
+        mRealm.commitTransaction();
 
     }
 

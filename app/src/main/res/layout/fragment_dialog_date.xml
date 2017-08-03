@@ -12,58 +12,78 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <NumberPicker
-            android:id="@+id/np_year"
-            android:layout_weight="4"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="3"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tv_unit_year"
-            android:layout_width="0dp"
-            android:text="年"
-            android:textSize="20dp"
-            android:textColor="#000"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_margin="4dp"/>
+            <TextView
+                android:id="@+id/tv_label_year"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/year"
+                android:gravity="center"
+                android:layout_margin="4dp"/>
 
-        <NumberPicker
-            android:id="@+id/np_month"
+            <NumberPicker
+                android:id="@+id/np_year"
+                android:layout_weight="7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_weight="2"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tv_unit_month"
-            android:layout_width="0dp"
-            android:text=""
-            android:textSize="20dp"
-            android:textColor="#000"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_margin="4dp"/>
+            <TextView
+                android:id="@+id/tv_label_month"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/month"
+                android:gravity="center"
+                android:layout_margin="4dp"/>
 
-        <NumberPicker
-            android:id="@+id/np_day"
+            <NumberPicker
+                android:id="@+id/np_month"
+                android:layout_weight="7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_weight="2"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tv_unit_day"
-            android:layout_width="0dp"
-            android:text="日"
-            android:textSize="20dp"
-            android:textColor="#000"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_margin="4dp"/>
+            <TextView
+                android:id="@+id/tv_label_day"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/day"
+                android:gravity="center"
+                android:layout_margin="4dp"/>
+
+            <NumberPicker
+                android:id="@+id/np_day"
+                android:layout_weight="7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
 
 
     </LinearLayout>
+
 
 </LinearLayout>

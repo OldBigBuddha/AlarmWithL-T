@@ -16,9 +16,13 @@
     <string name="bt_add">Add</string>
     <string name="bt_set_date">set</string>
     <string name="title_date_dialog">Date</string>
-    <string name="dialog_date_set">set</string>
     <string name="message_error_null_title">Title is Empty.</string>
     <string name="message_error_null_context">Content is empty.</string>
     <string name="cancel">cancel</string>
     <string name="every">Every</string>
+    <string name="year">Year</string>
+    <string name="month">Month</string>
+    <string name="day">Day</string>
+    <string name="title_time_dialog">Time</string>
+    <string name="set">Set</string>
 </resources>
