@@ -8,11 +8,16 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 /**
  * Created by BigBuddha on 2017/08/03.
  */
 
 public class AlarmReceiver extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
         NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -28,6 +33,14 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setWhen(System.currentTimeMillis());
 
         manager.notify(0, builder.build());
+
+        Realm realm = Realm.getDefaultInstance();
+        AlarmRealmData deleteData = realm.where(AlarmRealmData.class).equalTo("title", title).findFirst();
+        realm.beginTransaction();
+        deleteData.deleteFromRealm();
+        realm.commitTransaction();
+
+
         Log.d("onReceive", "はいったお！！！！！！！！");
     }
 }

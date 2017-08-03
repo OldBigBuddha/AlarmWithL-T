@@ -216,7 +216,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
                         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
 
-                        Log.d("mSchedule", mSchedule.get(Calendar.YEAR) + "/" + mSchedule.get(Calendar.MONTH) + "/" + mSchedule.get(Calendar.DAY_OF_MONTH));
+                        Log.d("mSchedule", mSchedule.get(Calendar.YEAR) + "/" + (mSchedule.get(Calendar.MONTH) + 1) + "/" + mSchedule.get(Calendar.DAY_OF_MONTH));
                         Log.d("mSchedule", mSchedule.get(Calendar.HOUR_OF_DAY) + ":" + mSchedule.get(Calendar.MINUTE));
 
                         AlarmManager manager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);

@@ -39,11 +39,6 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
         mResults = results;
         mContext = context;
     }
-//
-//    public CustomRecyclerAdapter(List<String> list ,Context context) {
-//        this.list = list;
-//        mContext = context;
-//    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

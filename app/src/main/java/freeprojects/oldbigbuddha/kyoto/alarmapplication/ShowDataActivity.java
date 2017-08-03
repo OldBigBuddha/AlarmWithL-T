@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class ShowDataActivity extends AppCompatActivity {
             int position = viewHolder.getAdapterPosition();
 
             AlarmRealmData deleteData = mResults.get(position);
+            Log.d("Selected Position","Position:" + position);
             Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
             intent.setType(deleteData.getMadeDate() + "");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);

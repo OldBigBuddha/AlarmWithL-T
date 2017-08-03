@@ -34,7 +34,7 @@
             android:value="AIzaSyBMkFs4eSFXHqbemxXu5mH2oggrGkzHAzM" />
 
         <activity android:name=".ShowDataActivity"></activity>
-        <receiver android:name=".TestReceiver"/>
+        <receiver android:name=".AlarmReceiver"/>
     </application>
 
 </manifest>
