@@ -16,4 +16,5 @@
     <string name="message_error_null_title">タイトルが空です</string>
     <string name="message_error_null_context">内容が空です</string>
     <string name="cancel">キャンセル</string>
+    <string name="every">毎</string>
 </resources>

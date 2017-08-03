@@ -1,10 +1,22 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.SimpleFormatter;
 
+import android.Manifest;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,8 +31,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -40,7 +56,11 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewC
 import io.realm.Realm;
 
 //@RuntimePermissions
-public class NewCreateActivity extends AppCompatActivity implements PlaceSelectionListener, OnMapReadyCallback {
+public class NewCreateActivity extends AppCompatActivity implements PlaceSelectionListener,
+        OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     private static final String TAG = "NewCreateActivity";
 
@@ -56,21 +76,17 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
     private Toolbar mToolbar;
 
+    private GoogleApiClient mClient;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);
-        mBinding.setVm( new NewCreateViewModel(mBinding, this));
 
         initToolbar();
-
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        autocompleteFragment.setOnPlaceSelectedListener(this);
-
-        MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.google_map_fragment);
-        mapFragment.getMapAsync(this);
+        initOnClick();
+        initClient();
 
         mRealm = Realm.getDefaultInstance();
         mTitle = "";
@@ -78,7 +94,8 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         mSchedule = null;
         mGeofence = null;
 
-        Log.d(TAG,"onCreate");
+        mClient.connect();
+        Log.d(TAG, "onCreate");
 
     }
 
@@ -91,10 +108,10 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         MarkerOptions marker = new MarkerOptions();
         marker.position(latLng);
         marker.title(name);
-        marker.icon(BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_GREEN ));
-        googleMap.addMarker( marker );
+        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        googleMap.addMarker(marker);
 
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom( latLng, 17 ));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
     }
 
     @Override
@@ -108,7 +125,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     }
 
     private void initToolbar() {
-        mToolbar = (Toolbar)findViewById(R.id.tool_bar);
+        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -148,10 +165,10 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                     mBinding.etContext.setText("");
                     onBackPressed();
                 } else if (TextUtils.isEmpty(mBinding.etTitle.getText())) {
-                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_title) ,Snackbar.LENGTH_SHORT);
+                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_title), Snackbar.LENGTH_SHORT);
                     snackbar.show();
                 } else if (TextUtils.isEmpty(mBinding.etContext.getText())) {
-                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_context) ,Snackbar.LENGTH_SHORT);
+                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_context), Snackbar.LENGTH_SHORT);
                     snackbar.show();
                 }
                 break;
@@ -172,23 +189,134 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         mRealm.commitTransaction();
     }
 
-    public void getCheckDate(CompoundButton button, boolean isChecked) {
-        mBinding.switchDate.setChecked( isChecked );
-        mBinding.expandDate.toggle();
-        Log.d("Date", isChecked + "");
-        Log.d("Location", mBinding.switchLocation.isChecked() + "");
+    public void initOnClick() {
+        mBinding.switchDate.setOnCheckedChangeListener(dataListener);
+//        mBinding.switchLocation.setOnCheckedChangeListener(localeListener);
+        mBinding.btAddDate.setOnClickListener(onAddSchedule);
     }
 
-    public void getCheckLocation(CompoundButton button, boolean isChecked) {
-        mBinding.switchLocation.setChecked( isChecked );
-        mBinding.expandLocation.toggle();
-        Log.d("Location", isChecked + "");
-        Log.d("Date", mBinding.switchDate.isChecked() + "");
+//    public void initMap() {
+//        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+//        autocompleteFragment.setOnPlaceSelectedListener(this);
+//
+//        MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.google_map_fragment);
+//        mapFragment.getMapAsync(this);
+//    }
+
+    private CompoundButton.OnCheckedChangeListener dataListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            mBinding.switchDate.setChecked(isChecked);
+            mBinding.expandDate.toggle();
+        }
+    };
+
+//    private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
+//        @Override
+//        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//            mBinding.switchLocation.setChecked( isChecked );
+//            mBinding.expandLocation.toggle();
+//        }
+//    };
+
+    private View.OnClickListener onAddSchedule = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.d("AddOnClick", "Clicked");
+            DateDialogFragment fragment = DateDialogFragment.newInstance();
+            fragment.setOnDataFragmentListener(new DateDialogFragment.OnDataFragmentListener() {
+                @Override
+                public void onClickPositive(int year, int month, int day) {
+                    configSchedule(year, month, day);
+                    mBinding.tvDate.setText(formatSchedule());
+                }
+            });
+            fragment.show(getSupportFragmentManager(), "DataDialogFragment");
+        }
+    };
+
+    public void configSchedule(int year, int month, int day) {
+        mSchedule = new Date();
+        mSchedule.setYear(year);
+        mSchedule.setMonth(month);
+        mSchedule.setDate(day);
     }
 
-    public void onAddSchedule(View view) {
-        DateDialogFragment fragment = DateDialogFragment.newInstance();
+    public String formatSchedule() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        return format.format(mSchedule);
 
     }
 
-}
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d("OnConnected", "start");
+        mGeofence = new Geofence.Builder()
+                .setRequestId(mTitle)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT | Geofence.GEOFENCE_TRANSITION_ENTER)
+                .setCircularRegion(34.706682, 135.500974, 10)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .build();
+
+        List<Geofence> geofences = new ArrayList<>();
+        geofences.add(mGeofence);
+
+        Intent intent = new Intent(getApplicationContext(), TestReceiver.class);
+        PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            return;
+        }
+        LocationServices.GeofencingApi.addGeofences(mClient, geofences, pending);
+        Log.d("OnConnected", "finish");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d("onConnectionSuspended", "onConnectionSuspended");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d("onConnectionFailed", connectionResult.getErrorMessage()+"");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        String locationData = "{\"緯度\"=\"" + location.getLatitude() + "\",\"軽度\"" + location.getLongitude() + "}";
+        Log.d("onLocationChanged", locationData);
+    }
+
+    @Override
+    protected void onResume() {
+        if (mClient != null) {
+            mClient.connect();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if (mClient != null) {
+            mClient.disconnect();
+        }
+        super.onPause();
+    }
+
+    public void initClient() {
+        mClient = new GoogleApiClient.Builder( getApplicationContext() )
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+    }
+ }
