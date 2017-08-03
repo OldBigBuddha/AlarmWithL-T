@@ -76,7 +76,7 @@ public class DateDialogFragment extends DialogFragment {
         .setPositiveButton(getString(R.string.set), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mListener.onClickPositive(mYear.getValue(), mMonth.getValue() - 1, mDay.getValue());
+                mListener.onClickPositive(mYear.getValue(), mMonth.getValue() + 1, mDay.getValue());
             }
         })
         .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {

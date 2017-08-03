@@ -1,5 +1,7 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
@@ -39,13 +41,17 @@ public class ShowDataActivity extends AppCompatActivity {
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
-            CustomRecyclerAdapter adapter = (CustomRecyclerAdapter)mBinding.recycler.getAdapter();
-            adapter.removeItem(position);
-            adapter.notifyDataSetChanged();
 
             AlarmRealmData deleteData = mResults.get(position);
             Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-            intent.setType(deleteData.getDate().getTime() + "");
+            intent.setType(deleteData.getMadeDate() + "");
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+            pendingIntent.cancel();
+            ((AlarmManager)getSystemService(ALARM_SERVICE)).cancel(pendingIntent);
+
+            CustomRecyclerAdapter adapter = (CustomRecyclerAdapter)mBinding.recycler.getAdapter();
+            adapter.removeItem(position);
+            adapter.notifyDataSetChanged();
         }
     });
 

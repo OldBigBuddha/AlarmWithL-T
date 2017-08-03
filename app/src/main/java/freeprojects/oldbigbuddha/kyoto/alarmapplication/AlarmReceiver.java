@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 /**
  * Created by BigBuddha on 2017/08/03.
@@ -20,14 +21,13 @@ public class AlarmReceiver extends BroadcastReceiver {
         String title = intent.getStringExtra("title");
         String content = intent.getStringExtra("content");
 
-        builder.setSmallIcon(R.mipmap.ic_launcher_round)
-//                .setContentTitle(title)
-                .setContentTitle("LATE")
-//                .setContentText(content)
-                .setContentText("Location And LatE")
+        builder.setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(content)
                 .setContentInfo("Alarm")
                 .setWhen(System.currentTimeMillis());
 
         manager.notify(0, builder.build());
+        Log.d("onReceive", "はいったお！！！！！！！！");
     }
 }

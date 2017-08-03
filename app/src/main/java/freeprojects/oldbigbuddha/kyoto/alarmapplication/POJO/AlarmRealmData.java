@@ -11,21 +11,20 @@ import io.realm.annotations.PrimaryKey;
 
 public class AlarmRealmData extends RealmObject {
 
-    private int geofenceId;
-    private String title;
+    @PrimaryKey
+    private long mMadeDate;
     private String content;
+    private String title;
     private Date date;
+    private int geofenceId;
 
-    public long getmMadeDate() {
+    public long getMadeDate() {
         return mMadeDate;
     }
 
-    public void setmMadeDate(long mMadeDate) {
+    public void setMadeDate(long mMadeDate) {
         this.mMadeDate = mMadeDate;
     }
-
-    @PrimaryKey
-    private long mMadeDate;
 
     public AlarmRealmData() {}
 

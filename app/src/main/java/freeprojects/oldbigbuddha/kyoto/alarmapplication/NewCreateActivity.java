@@ -135,7 +135,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
         initToolbar();
         initOnClick();
-        initClient();
+//        initClient();
         initMap();
 
         mRealm = Realm.getDefaultInstance();
@@ -208,16 +208,29 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                     if (isDate) {
                         mSchedule.set(Calendar.SECOND, 0);
                         data.setDate(mSchedule.getTime());
+
                         Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                        intent.putExtra("title", data.getTitle());
+                        intent.putExtra("content", data.getContent());
+                        intent.setType(data.getMadeDate() + "");
+
                         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+                        Log.d("mSchedule", mSchedule.get(Calendar.YEAR) + "/" + mSchedule.get(Calendar.MONTH) + "/" + mSchedule.get(Calendar.DAY_OF_MONTH));
+                        Log.d("mSchedule", mSchedule.get(Calendar.HOUR_OF_DAY) + ":" + mSchedule.get(Calendar.MINUTE));
 
                         AlarmManager manager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
                         manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), pendingIntent);
                         Log.d(TAG, "case Date");
                     }
-                    saveData(data);
+
+                    mRealm.beginTransaction();
+                    mRealm.copyToRealm(data);
+                    mRealm.commitTransaction();
+
                     mBinding.etTitle.setText("");
                     mBinding.etContext.setText("");
+
                     onBackPressed();
                 } else if (TextUtils.isEmpty(mBinding.etTitle.getText())) {
                     Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_title), Snackbar.LENGTH_SHORT);
@@ -233,12 +246,6 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
             }
         }
         return true;
-    }
-
-    public void saveData(AlarmRealmData data) {
-        mRealm.beginTransaction();
-        mRealm.copyToRealm(data);
-        mRealm.commitTransaction();
     }
 
     public void initOnClick() {
