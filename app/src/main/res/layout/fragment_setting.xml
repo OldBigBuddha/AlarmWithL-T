@@ -1,13 +1,8 @@
-<layout>
-<FrameLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.SettingFragment">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
+        android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -235,6 +230,4 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-
-</FrameLayout>
 </layout>

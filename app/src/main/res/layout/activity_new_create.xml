@@ -4,7 +4,6 @@
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/parentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorBackground"
@@ -19,6 +18,12 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
         </android.support.v7.widget.Toolbar>
+
+        <fragment
+            android:id="@+id/setting_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.SettingFragment" />
 
     </LinearLayout>
 </layout>

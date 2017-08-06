@@ -33,7 +33,6 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
     private Realm mRealm;
     private RealmResults<AlarmRealmData> mResults;
     private Context mContext;
-    private List<String> list;
 
     public CustomRecyclerAdapter(RealmResults<AlarmRealmData> results, Context context) {
         mResults = results;

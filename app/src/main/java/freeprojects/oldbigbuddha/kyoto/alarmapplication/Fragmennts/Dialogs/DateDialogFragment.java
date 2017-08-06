@@ -3,6 +3,7 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -14,6 +15,7 @@ import android.widget.NumberPicker;
 import java.util.Calendar;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentDialogDateBinding;
 
 /**
  * Created by developer on 17/08/02.
@@ -27,11 +29,9 @@ public class DateDialogFragment extends DialogFragment {
 
     private OnDataDialogFragmentListener mListener;
 
-    private NumberPicker mYear;
-    private NumberPicker mMonth;
-    private NumberPicker mDay;
-
     private Calendar today;
+
+    private FragmentDialogDateBinding mBinding;
 
 
 
@@ -59,13 +59,9 @@ public class DateDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder( getActivity() );
 
-        LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View view = inflater.inflate(R.layout.fragment_dialog_date, null);
+        mBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_date, null, false);
 
-        builder.setView(view);
-        mYear  = (NumberPicker)view.findViewById(R.id.np_year);
-        mMonth = (NumberPicker)view.findViewById(R.id.np_month);
-        mDay   = (NumberPicker)view.findViewById(R.id.np_day);
+        builder.setView(mBinding.getRoot());
 
         initYearNumPicker();
         initMonthNumPicker();
@@ -76,7 +72,7 @@ public class DateDialogFragment extends DialogFragment {
         .setPositiveButton(getString(R.string.set), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mListener.onClickPositive(mYear.getValue(), mMonth.getValue() + 1, mDay.getValue());
+                mListener.onClickPositive(mBinding.npYear.getValue(), mBinding.npMonth.getValue() - 1, mBinding.npDay.getValue());
             }
         })
         .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -92,13 +88,13 @@ public class DateDialogFragment extends DialogFragment {
     }
 
     public void settingNowNumPicker() {
-        mMonth.setValue( today.get(Calendar.MONTH) + 1 );
-        mDay.setValue( today.get(Calendar.DAY_OF_MONTH));
+        mBinding.npMonth.setValue( today.get(Calendar.MONTH) + 1 );
+        mBinding.npDay.setValue( today.get(Calendar.DAY_OF_MONTH));
     }
 
     public void initYearNumPicker() {
-        mYear.setMinValue(today.get(Calendar.YEAR));
-        mYear.setMaxValue(today.get(Calendar.YEAR) + 20);
+        mBinding.npYear.setMinValue(today.get(Calendar.YEAR));
+        mBinding.npYear.setMaxValue(today.get(Calendar.YEAR) + 20);
 //        List<String> years = new ArrayList<>();
 //        years.add( getString(R.string.every) );
 //        for (int i = today.getYear(); i < (today.getYear() + 10 ); i++) {
@@ -108,8 +104,8 @@ public class DateDialogFragment extends DialogFragment {
     }
 
     public void initMonthNumPicker() {
-        mMonth.setMinValue(1);
-        mMonth.setMaxValue(12);
+        mBinding.npMonth.setMinValue(1);
+        mBinding.npMonth.setMaxValue(12);
 //        List<String> months = new ArrayList<>();
 //        months.add( getString(R.string.every) );
 //        for (int i = 1; i < 13; i++) {
@@ -120,8 +116,9 @@ public class DateDialogFragment extends DialogFragment {
 
     public void initDayNumPicker() {
 
-        mDay.setMinValue(1);
-        mDay.setMaxValue(31);
+        mBinding.npDay.setMinValue(1);
+        mBinding.npDay.setMaxValue(31);
+        //TODO 月による日の上限チャック
 
 //        List<String> days = new ArrayList<>();
 //        days.add( getString(R.string.every) );

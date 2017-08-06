@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.TimePicker;
 import java.util.Calendar;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentDialogTimeBinding;
 
 /**
  * Created by lifeistech on 2017/08/02.
@@ -33,9 +36,7 @@ public class TimeDialogFragment extends DialogFragment{
         this.mListener = mListener;
     }
 
-    private NumberPicker mHour;
-    private NumberPicker mMinute;
-
+    private FragmentDialogTimeBinding mBinding;
     private Calendar today;
 
 
@@ -51,12 +52,9 @@ public class TimeDialogFragment extends DialogFragment{
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View view = inflater.inflate(R.layout.fragment_dialog_time, null);
+        mBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_time, null, false);
 
-        builder.setView(view);
-        mHour = (NumberPicker)view.findViewById(R.id.np_hour);
-        mMinute = (NumberPicker)view.findViewById(R.id.np_minute);
+        builder.setView(mBinding.getRoot());
 
         initHour();
         initMinute();
@@ -66,7 +64,7 @@ public class TimeDialogFragment extends DialogFragment{
         .setPositiveButton(getString(R.string.set), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mListener.onClickPositive(mHour.getValue(), mMinute.getValue());
+                mListener.onClickPositive(mBinding.npHour.getValue(), mBinding.npMinute.getValue());
             }
         })
         .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -89,18 +87,18 @@ public class TimeDialogFragment extends DialogFragment{
     }
 
     public void initHour() {
-        mHour.setMinValue(0);
-        mHour.setMaxValue(23);
+        mBinding.npHour.setMinValue(0);
+        mBinding.npHour.setMaxValue(23);
     }
 
     public void initMinute() {
-        mMinute.setMinValue(0);
-        mMinute.setMaxValue(59);
+        mBinding.npMinute.setMinValue(0);
+        mBinding.npMinute.setMaxValue(59);
     }
 
     public void settingNowNumPicker() {
-        mHour.setValue( today.get(Calendar.HOUR_OF_DAY) );
-        mMinute.setValue( today.get(Calendar.MINUTE) );
+        mBinding.npHour.setValue( today.get(Calendar.HOUR_OF_DAY) );
+        mBinding.npMinute.setValue( today.get(Calendar.MINUTE) );
     }
 
 }
