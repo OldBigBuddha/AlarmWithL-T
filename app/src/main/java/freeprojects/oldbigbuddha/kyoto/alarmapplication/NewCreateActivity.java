@@ -21,6 +21,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -332,13 +334,10 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             mBinding.switchDate.setChecked(isChecked);
-            isDate = !isDate;
             mBinding.expandDate.toggle();
-            Log.d("SwitchData", "isData=" + isDate + ",isLocation=" + isLocation + ",isChecked=" + isChecked );
-            if (!isLocation) {
-//                mBinding.switchLocation.setChecked(!isChecked);
+            if (!mBinding.switchLocation.isChecked() && !isChecked) {
+                mBinding.switchLocation.setChecked(true);
                 mBinding.expandLocation.expand();
-                isLocation = !isLocation;
             }
         }
     };
@@ -346,14 +345,11 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            mBinding.switchLocation.setChecked( isChecked );
-            isLocation = !isLocation;
+            mBinding.switchLocation.setChecked(isChecked);
             mBinding.expandLocation.toggle();
-            Log.d("SwitchLocation", "isData=" + isDate + ",isLocation=" + isLocation + ",isChecked=" + isChecked );
-            if (!isDate) {
-//                mBinding.switchDate.setChecked(!isChecked);
+            if (!mBinding.switchDate.isChecked() && !isChecked) {
+                mBinding.switchDate.setChecked(true);
                 mBinding.expandDate.expand();
-                isDate = !isDate;
             }
         }
     };
