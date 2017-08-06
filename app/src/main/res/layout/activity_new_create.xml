@@ -55,6 +55,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <ScrollView
+                android:id="@+id/scroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -116,13 +117,13 @@
 
                             <fragment
                                 android:id="@+id/google_map_fragment"
-                                android:name="com.google.android.gms.maps.MapFragment"
+                                android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.CustomMapFragment"
                                 android:layout_width="match_parent"
                                 android:layout_height="200dp" />
                         </LinearLayout>
                     </net.cachapa.expandablelayout.ExpandableLayout>
 
-                    <!--date header-->f
+                    <!--date header-->
                     <LinearLayout
                         android:id="@+id/date_header_linear"
                         android:layout_width="match_parent"

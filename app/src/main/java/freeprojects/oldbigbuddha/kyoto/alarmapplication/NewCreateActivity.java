@@ -8,11 +8,13 @@ import java.util.List;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -43,8 +45,10 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.CustomMapFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.DateDialogFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.TimeDialogFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
@@ -62,7 +66,10 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
     ActivityNewCreateBinding mBinding;
 
-    private GoogleMap googleMap;
+    private GoogleMap mGoogleMap;
+    private LatLng mTargetLocation;
+    private Marker mMarker;
+    private MarkerOptions mMarkerOptions;
 
     private boolean isLocation = true;
     private boolean isDate     = false;
@@ -77,57 +84,6 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
     private GoogleApiClient mClient;
 
-    private CompoundButton.OnCheckedChangeListener dataListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            mBinding.switchDate.setChecked(isChecked);
-            isDate = !isDate;
-            mBinding.expandDate.toggle();
-        }
-    };
-
-    private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            mBinding.switchLocation.setChecked( isChecked );
-            isLocation = !isLocation;
-            mBinding.expandLocation.toggle();
-        }
-    };
-
-    private View.OnClickListener onAddSchedule = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            DateDialogFragment fragment = DateDialogFragment.newInstance();
-            fragment.setOnDataFragmentListener(new DateDialogFragment.OnDataDialogFragmentListener() {
-                @Override
-                public void onClickPositive(int year, int month, int day) {
-                    mSchedule.set(year, month, day);
-                    mBinding.tvDate.setText(formatDate());
-                }
-            });
-            fragment.show(getSupportFragmentManager(), "DataDialogFragment");
-        }
-    };
-
-    private View.OnClickListener onAddTime = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            TimeDialogFragment fragment = TimeDialogFragment.newInstance();
-            fragment.setOnTimeDialogFragmentListener(new TimeDialogFragment.OnTimeDialogFragmentListener() {
-                @Override
-                public void onClickPositive(int hour, int minute) {
-                    mSchedule.set(Calendar.HOUR_OF_DAY, hour);
-                    mSchedule.set(Calendar.MINUTE, minute);
-                    mBinding.tvTime.setText(formatTime());
-                }
-            });
-            fragment.show(getSupportFragmentManager(), "TimeDialogFragment");
-        }
-    };
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,34 +91,25 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
         initToolbar();
         initOnClick();
-//        initClient();
+        initClient();
         initMap();
 
         mRealm = Realm.getDefaultInstance();
         mTitle = "";
         mContent = "";
         mSchedule = Calendar.getInstance();
-        mGeofence = null;
 
         mBinding.tvDate.setText(formatDate());
         mBinding.tvTime.setText(formatTime());
-
-//        mClient.connect();
     }
 
     @Override
     public void onPlaceSelected(Place place) {
         String name = place.getName().toString();
-        LatLng latLng = place.getLatLng();
-        Log.i("LocationInfo", name + "\n" + latLng.toString());
+        mTargetLocation = place.getLatLng();
+        Log.i("LocationInfo", name + "\n" + mTargetLocation.toString());
 
-        MarkerOptions marker = new MarkerOptions();
-        marker.position(latLng);
-        marker.title(name);
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        googleMap.addMarker(marker);
-
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+        makeMarker(name);
     }
 
     @Override
@@ -172,16 +119,16 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
+        mGoogleMap = googleMap;
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                mTargetLocation = latLng;
+                makeMarker(null);
+            }
+        });
     }
 
-    private void initToolbar() {
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        if (mToolbar != null) {
-            setSupportActionBar(mToolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-    }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -224,6 +171,10 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                         Log.d(TAG, "case Date");
                     }
 
+                    if (isLocation) {
+//                        mClient.connect();
+                    }
+
                     mRealm.beginTransaction();
                     mRealm.copyToRealm(data);
                     mRealm.commitTransaction();
@@ -248,52 +199,36 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         return true;
     }
 
-    public void initOnClick() {
-        mBinding.switchDate.setOnCheckedChangeListener(dataListener);
-        mBinding.switchLocation.setOnCheckedChangeListener(localeListener);
-        mBinding.btAddDate.setOnClickListener(onAddSchedule);
-        mBinding.btAddTime.setOnClickListener(onAddTime);
-    }
-
-    public String formatDate() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-        return format.format(mSchedule.getTime());
-    }
-
-    public String formatTime() {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        return format.format(mSchedule.getTime());
-    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d("OnConnected", "start");
-        mGeofence = new Geofence.Builder()
-                .setRequestId(mTitle)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
-                .setCircularRegion(34.706682, 135.500974, 10)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .build();
-
-        List<Geofence> geofences = new ArrayList<>();
-        geofences.add(mGeofence);
-
-        Intent intent = new Intent(getApplicationContext(), TestReceiver.class);
-        PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            return;
-        }
-        LocationServices.GeofencingApi.addGeofences(mClient, geofences, pending);
-        Log.d("OnConnected", "finish");
+//        mGeofence = new Geofence.Builder()
+//                .setRequestId(mTitle)
+//                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
+//                .setCircularRegion(mTargetLocation.latitude, mTargetLocation.longitude, 10)
+//                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+//                .build();
+//
+//        List<Geofence> geofences = new ArrayList<>();
+//        geofences.add(mGeofence);
+//
+//        Intent intent = new Intent(getApplicationContext(), TestReceiver.class);
+//        PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+//            return;
+//        }
+//        LocationServices.GeofencingApi.addGeofences(mClient, geofences, pending);
+//        Log.d("OnConnected", "finish");
     }
 
     @Override
@@ -328,7 +263,22 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         super.onPause();
     }
 
-    public void initClient() {
+    private void initToolbar() {
+        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    private void initOnClick() {
+        mBinding.switchDate.setOnCheckedChangeListener(dataListener);
+        mBinding.switchLocation.setOnCheckedChangeListener(localeListener);
+        mBinding.btAddDate.setOnClickListener(onAddSchedule);
+        mBinding.btAddTime.setOnClickListener(onAddTime);
+    }
+
+    private void initClient() {
         mClient = new GoogleApiClient.Builder( getApplicationContext() )
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -336,13 +286,107 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                 .build();
     }
 
-    public void initMap() {
+    private void initMap() {
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         autocompleteFragment.setOnPlaceSelectedListener(this);
 
-        MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.google_map_fragment);
+        CustomMapFragment mapFragment = (CustomMapFragment) getFragmentManager().findFragmentById(R.id.google_map_fragment);
+        mapFragment.setParent(mBinding.scroll);
         mapFragment.getMapAsync(this);
+
+        mMarkerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 
     }
 
- }
+    private String formatDate() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        return format.format(mSchedule.getTime());
+    }
+
+    private String formatTime() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(mSchedule.getTime());
+    }
+
+    private void makeMarker(String name) {
+        markerRemove();
+        mMarkerOptions.position(mTargetLocation);
+        if (name != null) {
+            mMarkerOptions.title(name);
+        }
+        mMarker = mGoogleMap.addMarker(mMarkerOptions);
+        moveCamera();
+    }
+
+    private void markerRemove() {
+        if (mMarker != null) {
+            mMarker.remove();
+        }
+    }
+
+    private void moveCamera() {
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mTargetLocation, 17));
+    }
+
+    private CompoundButton.OnCheckedChangeListener dataListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            mBinding.switchDate.setChecked(isChecked);
+            isDate = !isDate;
+            mBinding.expandDate.toggle();
+            Log.d("SwitchData", "isData=" + isDate + ",isLocation=" + isLocation + ",isChecked=" + isChecked );
+            if (!isLocation) {
+//                mBinding.switchLocation.setChecked(!isChecked);
+                mBinding.expandLocation.expand();
+                isLocation = !isLocation;
+            }
+        }
+    };
+
+    private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            mBinding.switchLocation.setChecked( isChecked );
+            isLocation = !isLocation;
+            mBinding.expandLocation.toggle();
+            Log.d("SwitchLocation", "isData=" + isDate + ",isLocation=" + isLocation + ",isChecked=" + isChecked );
+            if (!isDate) {
+//                mBinding.switchDate.setChecked(!isChecked);
+                mBinding.expandDate.expand();
+                isDate = !isDate;
+            }
+        }
+    };
+
+    private View.OnClickListener onAddSchedule = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DateDialogFragment fragment = DateDialogFragment.newInstance();
+            fragment.setOnDataFragmentListener(new DateDialogFragment.OnDataDialogFragmentListener() {
+                @Override
+                public void onClickPositive(int year, int month, int day) {
+                    mSchedule.set(year, month, day);
+                    mBinding.tvDate.setText(formatDate());
+                }
+            });
+            fragment.show(getSupportFragmentManager(), "DataDialogFragment");
+        }
+    };
+
+    private View.OnClickListener onAddTime = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TimeDialogFragment fragment = TimeDialogFragment.newInstance();
+            fragment.setOnTimeDialogFragmentListener(new TimeDialogFragment.OnTimeDialogFragmentListener() {
+                @Override
+                public void onClickPositive(int hour, int minute) {
+                    mSchedule.set(Calendar.HOUR_OF_DAY, hour);
+                    mSchedule.set(Calendar.MINUTE, minute);
+                    mBinding.tvTime.setText(formatTime());
+                }
+            });
+            fragment.show(getSupportFragmentManager(), "TimeDialogFragment");
+        }
+    };
+
+}
