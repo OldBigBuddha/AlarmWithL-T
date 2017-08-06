@@ -76,9 +76,7 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
     private boolean isLocation = true;
     private boolean isDate     = false;
 
-    private String mTitle, mContent;
     private Calendar mSchedule;
-    private Geofence mGeofence;
 
     private Realm mRealm;
 
@@ -92,17 +90,15 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);
 
         initToolbar();
-        initOnClick();
-        initClient();
-        initMap();
+//        initOnClick();
+//        initClient();
+//        initMap();
 
         mRealm = Realm.getDefaultInstance();
-        mTitle = "";
-        mContent = "";
         mSchedule = Calendar.getInstance();
 
-        mBinding.tvDate.setText(formatDate());
-        mBinding.tvTime.setText(formatTime());
+//        mBinding.tvDate.setText(formatDate());
+//        mBinding.tvTime.setText(formatTime());
     }
 
     @Override
@@ -110,7 +106,6 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         String name = place.getName().toString();
         mTargetLocation = place.getLatLng();
         Log.i("LocationInfo", name + "\n" + mTargetLocation.toString());
-
         makeMarker(name);
     }
 
@@ -148,52 +143,53 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         String title, context;
         View parent = mBinding.parentLayout;
         switch (item.getItemId()) {
-            case R.id.create_menu: {
-                if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) {
-                    title = mBinding.etTitle.getText().toString();
-                    context = mBinding.etContext.getText().toString();
-
-                    AlarmRealmData data = new AlarmRealmData(title, context, System.currentTimeMillis());
-                    if (isDate) {
-                        mSchedule.set(Calendar.SECOND, 0);
-                        data.setDate(mSchedule.getTime());
-
-                        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-                        intent.putExtra("title", data.getTitle());
-                        intent.putExtra("content", data.getContent());
-                        intent.setType(data.getMadeDate() + "");
-
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-
-                        Log.d("mSchedule", mSchedule.get(Calendar.YEAR) + "/" + (mSchedule.get(Calendar.MONTH) + 1) + "/" + mSchedule.get(Calendar.DAY_OF_MONTH));
-                        Log.d("mSchedule", mSchedule.get(Calendar.HOUR_OF_DAY) + ":" + mSchedule.get(Calendar.MINUTE));
-
-                        AlarmManager manager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                        manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), pendingIntent);
-                        Log.d(TAG, "case Date");
-                    }
-
-                    if (isLocation) {
-//                        mClient.connect();
-                    }
-
-                    mRealm.beginTransaction();
-                    mRealm.copyToRealm(data);
-                    mRealm.commitTransaction();
-
-                    mBinding.etTitle.setText("");
-                    mBinding.etContext.setText("");
-
-                    onBackPressed();
-                } else if (TextUtils.isEmpty(mBinding.etTitle.getText())) {
-                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_title), Snackbar.LENGTH_SHORT);
-                    snackbar.show();
-                } else if (TextUtils.isEmpty(mBinding.etContext.getText())) {
-                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_context), Snackbar.LENGTH_SHORT);
-                    snackbar.show();
-                }
-                break;
-            }
+//            case R.id.create_menu: {
+//                if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) {
+//                    title = mBinding.etTitle.getText().toString();
+//                    context = mBinding.etContext.getText().toString();
+//
+//                    AlarmRealmData data = new AlarmRealmData(title, context, System.currentTimeMillis());
+//                    if (mBinding.switchDate.isChecked()) {
+//                        mSchedule.set(Calendar.SECOND, 0);
+//                        data.setDate(mSchedule.getTime());
+//
+//                        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+//                        intent.putExtra("title", data.getTitle());
+//                        intent.putExtra("content", data.getContent());
+//                        intent.setType(data.getMadeDate() + "");
+//
+//                        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+//
+//                        Log.d("mSchedule", mSchedule.get(Calendar.YEAR) + "/" + (mSchedule.get(Calendar.MONTH) + 1) + "/" + mSchedule.get(Calendar.DAY_OF_MONTH));
+//                        Log.d("mSchedule", mSchedule.get(Calendar.HOUR_OF_DAY) + ":" + mSchedule.get(Calendar.MINUTE));
+//
+//                        AlarmManager manager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+//                        manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), pendingIntent);
+//                        Log.d(TAG, "case Date");
+//                    }
+//
+//                    if (mBinding.switchLocation.isChecked()) {
+//                        Log.d("SwitchLocation", "True");
+////                        mClient.connect();
+//                    }
+//
+//                    mRealm.beginTransaction();
+//                    mRealm.copyToRealm(data);
+//                    mRealm.commitTransaction();
+//
+//                    mBinding.etTitle.setText("");
+//                    mBinding.etContext.setText("");
+//                    onBackPressed();
+//
+//                } else if (TextUtils.isEmpty(mBinding.etTitle.getText())) {
+//                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_title), Snackbar.LENGTH_SHORT);
+//                    snackbar.show();
+//                } else if (TextUtils.isEmpty(mBinding.etContext.getText())) {
+//                    Snackbar snackbar = Snackbar.make(parent, getString(R.string.message_error_null_context), Snackbar.LENGTH_SHORT);
+//                    snackbar.show();
+//                }
+//                break;
+//            }
             default: {
                 onBackPressed();
             }
@@ -273,12 +269,12 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         }
     }
 
-    private void initOnClick() {
-        mBinding.switchDate.setOnCheckedChangeListener(dataListener);
-        mBinding.switchLocation.setOnCheckedChangeListener(localeListener);
-        mBinding.btAddDate.setOnClickListener(onAddSchedule);
-        mBinding.btAddTime.setOnClickListener(onAddTime);
-    }
+//    private void initOnClick() {
+//        mBinding.switchDate.setOnCheckedChangeListener(dataListener);
+//        mBinding.switchLocation.setOnCheckedChangeListener(localeListener);
+//        mBinding.btAddDate.setOnClickListener(onAddSchedule);
+//        mBinding.btAddTime.setOnClickListener(onAddTime);
+//    }
 
     private void initClient() {
         mClient = new GoogleApiClient.Builder( getApplicationContext() )
@@ -288,17 +284,17 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
                 .build();
     }
 
-    private void initMap() {
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        autocompleteFragment.setOnPlaceSelectedListener(this);
-
-        CustomMapFragment mapFragment = (CustomMapFragment) getFragmentManager().findFragmentById(R.id.google_map_fragment);
-        mapFragment.setParent(mBinding.scroll);
-        mapFragment.getMapAsync(this);
-
-        mMarkerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-
-    }
+//    private void initMap() {
+//        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+//        autocompleteFragment.setOnPlaceSelectedListener(this);
+//
+//        CustomMapFragment mapFragment = (CustomMapFragment) getFragmentManager().findFragmentById(R.id.google_map_fragment);
+//        mapFragment.setParent(mBinding.scroll);
+//        mapFragment.getMapAsync(this);
+//
+//        mMarkerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+//
+//    }
 
     private String formatDate() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
@@ -330,59 +326,59 @@ public class NewCreateActivity extends AppCompatActivity implements PlaceSelecti
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mTargetLocation, 17));
     }
 
-    private CompoundButton.OnCheckedChangeListener dataListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            mBinding.switchDate.setChecked(isChecked);
-            mBinding.expandDate.toggle();
-            if (!mBinding.switchLocation.isChecked() && !isChecked) {
-                mBinding.switchLocation.setChecked(true);
-                mBinding.expandLocation.expand();
-            }
-        }
-    };
-
-    private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            mBinding.switchLocation.setChecked(isChecked);
-            mBinding.expandLocation.toggle();
-            if (!mBinding.switchDate.isChecked() && !isChecked) {
-                mBinding.switchDate.setChecked(true);
-                mBinding.expandDate.expand();
-            }
-        }
-    };
-
-    private View.OnClickListener onAddSchedule = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            DateDialogFragment fragment = DateDialogFragment.newInstance();
-            fragment.setOnDataFragmentListener(new DateDialogFragment.OnDataDialogFragmentListener() {
-                @Override
-                public void onClickPositive(int year, int month, int day) {
-                    mSchedule.set(year, month, day);
-                    mBinding.tvDate.setText(formatDate());
-                }
-            });
-            fragment.show(getSupportFragmentManager(), "DataDialogFragment");
-        }
-    };
-
-    private View.OnClickListener onAddTime = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            TimeDialogFragment fragment = TimeDialogFragment.newInstance();
-            fragment.setOnTimeDialogFragmentListener(new TimeDialogFragment.OnTimeDialogFragmentListener() {
-                @Override
-                public void onClickPositive(int hour, int minute) {
-                    mSchedule.set(Calendar.HOUR_OF_DAY, hour);
-                    mSchedule.set(Calendar.MINUTE, minute);
-                    mBinding.tvTime.setText(formatTime());
-                }
-            });
-            fragment.show(getSupportFragmentManager(), "TimeDialogFragment");
-        }
-    };
+//    private CompoundButton.OnCheckedChangeListener dataListener = new CompoundButton.OnCheckedChangeListener() {
+//        @Override
+//        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//            mBinding.switchDate.setChecked(isChecked);
+//            mBinding.expandDate.toggle();
+//            if (!mBinding.switchLocation.isChecked() && !isChecked) {
+//                mBinding.switchLocation.setChecked(true);
+//                mBinding.expandLocation.expand();
+//            }
+//        }
+//    };
+//
+//    private CompoundButton.OnCheckedChangeListener localeListener = new CompoundButton.OnCheckedChangeListener() {
+//        @Override
+//        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//            mBinding.switchLocation.setChecked(isChecked);
+//            mBinding.expandLocation.toggle();
+//            if (!mBinding.switchDate.isChecked() && !isChecked) {
+//                mBinding.switchDate.setChecked(true);
+//                mBinding.expandDate.expand();
+//            }
+//        }
+//    };
+//
+//    private View.OnClickListener onAddSchedule = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            DateDialogFragment fragment = DateDialogFragment.newInstance();
+//            fragment.setOnDataFragmentListener(new DateDialogFragment.OnDataDialogFragmentListener() {
+//                @Override
+//                public void onClickPositive(int year, int month, int day) {
+//                    mSchedule.set(year, month, day);
+//                    mBinding.tvDate.setText(formatDate());
+//                }
+//            });
+//            fragment.show(getSupportFragmentManager(), "DataDialogFragment");
+//        }
+//    };
+//
+//    private View.OnClickListener onAddTime = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            TimeDialogFragment fragment = TimeDialogFragment.newInstance();
+//            fragment.setOnTimeDialogFragmentListener(new TimeDialogFragment.OnTimeDialogFragmentListener() {
+//                @Override
+//                public void onClickPositive(int hour, int minute) {
+//                    mSchedule.set(Calendar.HOUR_OF_DAY, hour);
+//                    mSchedule.set(Calendar.MINUTE, minute);
+//                    mBinding.tvTime.setText(formatTime());
+//                }
+//            });
+//            fragment.show(getSupportFragmentManager(), "TimeDialogFragment");
+//        }
+//    };
 
 }
