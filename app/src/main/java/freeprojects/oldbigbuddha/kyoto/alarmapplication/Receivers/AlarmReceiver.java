@@ -1,4 +1,4 @@
-package freeprojects.oldbigbuddha.kyoto.alarmapplication;
+package freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -9,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
 import io.realm.Realm;
 import io.realm.RealmResults;
 

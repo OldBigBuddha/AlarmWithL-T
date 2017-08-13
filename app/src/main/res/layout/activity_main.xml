@@ -12,8 +12,14 @@
     <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:layout_height="match_parent">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"></android.support.v7.widget.Toolbar>
 
     <TextView
         android:id="@+id/tv_home"
@@ -25,7 +31,7 @@
         app:htmlText="@{title}"/>
 
     <Button
-        android:background="@drawable/shape_rouded_corners_30dp"
+        android:background="@drawable/shape_rouded_corners_30dp_dark"
         android:id="@+id/bt_new"
         android:text="@string/bt_new"
         android:textSize="20sp"
@@ -39,7 +45,7 @@
         android:onClick="@{(v) -> viewModel.onClickToNewCreate(v)}"/>
 
     <Button
-        android:background="@drawable/shape_rouded_corners_30dp"
+        android:background="@drawable/shape_rouded_corners_30dp_dark"
         android:id="@+id/bt_edit"
         android:text="@string/bt_edit"
         android:textSize="20sp"

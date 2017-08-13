@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="@string/key_config"
+        android:title="@string/config_fragment_title">
+
+
+        <CheckBoxPreference
+            android:key="@string/key_is_night_mode"
+            android:checked="false"
+            android:title="@string/config_fragment_night_mode_title"
+            android:summary="@string/config_fragment_night_mode_summary" />
+
+        <CheckBoxPreference
+            android:key="@string/key_is_senior_mode"
+            android:checked="false"
+            android:title="@string/config_fragment_senior_mode_title"
+            android:summary="@string/config_fragment_senior_mode_summary" />
+
+        <Preference
+            android:key="licenses"
+            android:layout="@layout/license_row" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,4 +1,4 @@
-package freeprojects.oldbigbuddha.kyoto.alarmapplication;
+package freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
 
 /**
  * Created by lifeistech on 2017/08/03.

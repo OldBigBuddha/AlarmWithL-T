@@ -1,6 +1,7 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
 
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,15 +24,24 @@ public class NewCreateActivity extends AppCompatActivity {
 
     private Realm mRealm;
 
+    private SharedPreferences mConfig;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
+        boolean isNightMode = mConfig.getBoolean( getString(R.string.key_is_night_mode), false );
+        if ( isNightMode ) {
+            setTheme(R.style.DarkTheme);
+        } else {
+            setTheme(R.style.LightTheme);
+        }
+
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
         mFragment = (SettingFragment)getSupportFragmentManager().findFragmentById(R.id.setting_fragment);
 
         initToolbar();
         mRealm = Realm.getDefaultInstance(); // Initialize Realm
-
     }
 
     @Override
@@ -74,7 +84,7 @@ public class NewCreateActivity extends AppCompatActivity {
 
     // Initialize ToolBar
     private void initToolbar() {
-        Toolbar toolBar = mBinding.toolBar;
+        Toolbar toolBar = mBinding.toolbarCreate;
         if (toolBar != null) {
             setSupportActionBar(toolBar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

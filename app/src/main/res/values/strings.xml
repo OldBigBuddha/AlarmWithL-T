@@ -28,4 +28,13 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="config">config</string>
+    <string name="config_fragment_title">Configration</string>
+    <string name="key_is_night_mode">nightmode</string>
+    <string name="config_fragment_night_mode_title">Night Mode</string>
+    <string name="config_fragment_night_mode_summary">Night Mode set On/Off</string>
+    <string name="key_is_senior_mode">senior</string>
+    <string name="config_fragment_senior_mode_title">Senior Mode</string>
+    <string name="config_fragment_senior_mode_summary">For senior</string>
+    <string name="key_config">config</string>
 </resources>
