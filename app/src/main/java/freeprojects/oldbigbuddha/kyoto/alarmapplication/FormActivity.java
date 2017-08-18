@@ -1,6 +1,7 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +16,7 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
 import io.realm.Realm;
 
-public class NewCreateActivity extends AppCompatActivity {
+public class FormActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -37,8 +38,15 @@ public class NewCreateActivity extends AppCompatActivity {
             setTheme(R.style.LightTheme);
         }
 
+
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
+        Intent intent = getIntent();
         mFragment = (SettingFragment)getSupportFragmentManager().findFragmentById(R.id.setting_fragment);
+        if ( intent.getStringExtra("data") != null ) {
+            Bundle bundle = new Bundle();
+            bundle.putString("data", intent.getStringExtra("data"));
+            mFragment.setArguments(bundle);
+        }
 
         initToolbar();
         mRealm = Realm.getDefaultInstance(); // Initialize Realm

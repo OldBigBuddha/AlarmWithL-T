@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,9 +33,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -62,15 +66,17 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
     private GoogleMap mGoogleMap;
     private LatLng mTargetLocation;
+
     private Marker mMarker;
+    private Circle mCircle;
     private MarkerOptions mMarkerOptions;
+    private CircleOptions mCircleOptions;
 
     private boolean isLocation = true;
     private boolean isDate     = false;
 
+    private AlarmRealmData mData;
     private Calendar mSchedule;
-
-    private Realm mRealm;
 
     private SharedPreferences mConfig;
 
@@ -82,6 +88,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mConfig = getActivity().getSharedPreferences( getString(R.string.key_config), Context.MODE_PRIVATE );
+        mSchedule = Calendar.getInstance();
     }
 
     @Override
@@ -90,6 +97,13 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         // Inflate the layout for this fragment
         Log.d("config", "onCreateView");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false);
+        if (getArguments() != null) {
+            Gson gson = new Gson();
+            mData = gson.fromJson( getArguments().getString("data"), AlarmRealmData.class);
+            mSchedule.setTime(mData.getDate());
+        } else {
+            mData = null;
+        }
         return mBinding.getRoot();
     }
 
@@ -97,7 +111,11 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mSchedule = Calendar.getInstance();
+        if (mData != null) {
+            mBinding.etTitle.setText(mData.getTitle());
+            mBinding.etContext.setText(mData.getContent());
+        }
+
         mBinding.tvDate.setText( formatDate() );
         mBinding.tvTime.setText( formatTime() );
         initMap();
@@ -152,16 +170,19 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     private void makeMarker(String name) {
         markerRemove();
         mMarkerOptions.position(mTargetLocation);
+        mCircleOptions.center(mTargetLocation).radius(100);
         if (name != null) {
             mMarkerOptions.title(name);
         }
         mMarker = mGoogleMap.addMarker(mMarkerOptions);
+        mCircle = mGoogleMap.addCircle(mCircleOptions);
         moveCamera();
     }
 
     private void markerRemove() {
         if (mMarker != null) {
             mMarker.remove();
+            mCircle.remove();
         }
     }
 
@@ -187,6 +208,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         mapFragment.getMapAsync(this);
 
         mMarkerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        mCircleOptions = new CircleOptions().fillColor(Color.argb(97, 93, 185, 139)).strokeColor(Color.argb(200, 93, 185, 139));
 
     }
 

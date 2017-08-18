@@ -28,11 +28,20 @@ import io.realm.RealmResults;
  * Created by lifeistech on 2017/08/02.
  */
 
-public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder> {
+public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder>{
 
     private Realm mRealm;
     private RealmResults<AlarmRealmData> mResults;
     private Context mContext;
+
+    private AdapterListener mListener;
+    public interface AdapterListener {
+        void OnClickEditButton(View view, int position);
+    }
+
+    public void setListener(AdapterListener listener) {
+        mListener = listener;
+    }
 
     public CustomRecyclerAdapter(RealmResults<AlarmRealmData> results, Context context) {
         mResults = results;
@@ -84,6 +93,13 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
             tvIndex = (TextView)view.findViewById(R.id.tv_index);
             tvTitle = (TextView)view.findViewById(R.id.tv_title);
             ibEdit  = (ImageButton)view.findViewById(R.id.ib_edit_data);
+            ibEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "OnClicked", Toast.LENGTH_LONG).show();
+                    mListener.OnClickEditButton(v, getAdapterPosition());
+                }
+            });
         }
     }
 }

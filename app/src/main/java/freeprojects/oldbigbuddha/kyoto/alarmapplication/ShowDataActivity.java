@@ -10,6 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.View;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,6 @@ public class ShowDataActivity extends AppCompatActivity {
 
     private Realm mRealm;
     private RealmResults<AlarmRealmData> mResults;
-    private List<String> list = new ArrayList<>();
 
     private ItemTouchHelper mHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
         @Override
@@ -69,6 +71,18 @@ public class ShowDataActivity extends AppCompatActivity {
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mBinding.recycler.setLayoutManager(manager);
+        CustomRecyclerAdapter adapter = new CustomRecyclerAdapter(mResults, getApplicationContext());
+        adapter.setListener(new CustomRecyclerAdapter.AdapterListener() {
+            @Override
+            public void OnClickEditButton(View view, int position) {
+                Log.d("onClickEditButton", "OnClicked");
+                AlarmRealmData data = mResults.get(position);
+                Intent intent = new Intent(ShowDataActivity.this, FormActivity.class);
+                Gson gson = new Gson();
+                intent.putExtra("data", gson.toJson(data));
+                startActivity(intent);
+            }
+        });
         mBinding.recycler.setAdapter(new CustomRecyclerAdapter(mResults, getApplicationContext()));
         mHelper.attachToRecyclerView(mBinding.recycler);
         mBinding.recycler.addItemDecoration(mHelper);
