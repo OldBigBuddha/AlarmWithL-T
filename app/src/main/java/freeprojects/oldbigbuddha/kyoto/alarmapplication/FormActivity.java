@@ -1,9 +1,15 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,9 +22,10 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
 import io.realm.Realm;
 
-public class FormActivity extends AppCompatActivity {
+public class FormActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     private final String TAG = getClass().getSimpleName();
+    private final int REQUEST_CODE_ACCESS_FINE_LOCATION = 1;
 
     private ActivityNewCreateBinding mBinding;
     private SettingFragment mFragment;
@@ -38,6 +45,7 @@ public class FormActivity extends AppCompatActivity {
             setTheme(R.style.LightTheme);
         }
 
+        checkPermission();
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
         Intent intent = getIntent();
@@ -88,6 +96,29 @@ public class FormActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if ( grantResults.length <= 0 ||
+                requestCode != REQUEST_CODE_ACCESS_FINE_LOCATION ||
+                grantResults[0]!= PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("isPermit", false);
+            startActivity(intent);
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void checkPermission() {
+        Log.d("onCreate", "checkPermission");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ACCESS_FINE_LOCATION);
+            }
+        }
+
     }
 
     // Initialize ToolBar

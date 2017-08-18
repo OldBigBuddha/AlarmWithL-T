@@ -12,26 +12,18 @@ import io.realm.annotations.PrimaryKey;
 public class AlarmRealmData extends RealmObject {
 
     @PrimaryKey
-    private long mMadeDate;
+    private String geofenceId;
+
     private String content;
     private String title;
     private Date date;
-    private int geofenceId;
-
-    public long getMadeDate() {
-        return mMadeDate;
-    }
-
-    public void setMadeDate(long mMadeDate) {
-        this.mMadeDate = mMadeDate;
-    }
 
     public AlarmRealmData() {}
 
-    public AlarmRealmData(String title, String context,long date) {
+    public AlarmRealmData(String title, String context,String id) {
         this.title = title;
         this.content = context;
-        mMadeDate = date;
+        geofenceId = id;
     }
 
     @Override
@@ -51,26 +43,15 @@ public class AlarmRealmData extends RealmObject {
     @Override
     public String toString() {
         return "AlarmRealmData{" +
-                "title='" + title + '\'' +
-                ", content='" + content + '\'' +
+                "title = " + title +
+                ", content = " + content +
                 '}';
     }
 
-    @Override
-    public int hashCode() {
-        int result = geofenceId;
-        result = 31 * result + title.hashCode();
-        result = 31 * result + content.hashCode();
-        result = 31 * result + (date != null ? date.hashCode() : 0);
-        return result;
-    }
 
-    public int getGeofenceId() {
+
+    public String  getGeofenceId() {
         return geofenceId;
-    }
-
-    public void setGeofenceId(int geofenceId) {
-        this.geofenceId = geofenceId;
     }
 
     public String getTitle() {

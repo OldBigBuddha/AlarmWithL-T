@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -42,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             binding.btNew.setBackground( getDrawable(R.drawable.shape_rouded_corners_30dp_light) );
             binding.btEdit.setBackground( getDrawable(R.drawable.shape_rouded_corners_30dp_light) );
+        }
+
+        if (!getIntent().getBooleanExtra("isPermit", true)) {
+            Snackbar.make( binding.linearMain, getString( R.string.no_permission ), Snackbar.LENGTH_SHORT ).show();
         }
     }
 

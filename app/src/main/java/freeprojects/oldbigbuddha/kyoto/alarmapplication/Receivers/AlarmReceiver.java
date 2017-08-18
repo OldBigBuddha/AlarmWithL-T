@@ -26,6 +26,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         String title = intent.getStringExtra("title");
         String content = intent.getStringExtra("content");
+        final String id = intent.getStringExtra("id");
 
         builder.setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
@@ -36,8 +37,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         manager.notify(0, builder.build());
 
         Realm realm = Realm.getDefaultInstance();
-        AlarmRealmData deleteData = realm.where(AlarmRealmData.class).equalTo("title", title).findFirst();
+        AlarmRealmData deleteData = realm.where(AlarmRealmData.class).equalTo("geofenceId", id).findFirst();
         realm.beginTransaction();
+        // FIXME: 2017/08/18 Error now
         deleteData.deleteFromRealm();
         realm.commitTransaction();
 

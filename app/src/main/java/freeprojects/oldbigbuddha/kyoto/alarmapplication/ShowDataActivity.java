@@ -49,7 +49,7 @@ public class ShowDataActivity extends AppCompatActivity {
             AlarmRealmData deleteData = mResults.get(position);
             Log.d("Selected Position","Position:" + position);
             Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-            intent.setType(deleteData.getMadeDate() + "");
+            intent.setType(deleteData.getGeofenceId());
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
             pendingIntent.cancel();
             ((AlarmManager)getSystemService(ALARM_SERVICE)).cancel(pendingIntent);

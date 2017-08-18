@@ -1,11 +1,13 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts;
 
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.location.Location;
@@ -13,6 +15,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,7 +28,10 @@ import android.widget.CompoundButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -41,7 +47,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers.AlarmReceiver;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.DateDialogFragment;
@@ -73,10 +81,12 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     private CircleOptions mCircleOptions;
 
     private boolean isLocation = true;
-    private boolean isDate     = false;
+    private boolean isDate = false;
 
     private AlarmRealmData mData;
     private Calendar mSchedule;
+
+    private GoogleApiClient mClient;
 
     private SharedPreferences mConfig;
 
@@ -87,8 +97,11 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mConfig = getActivity().getSharedPreferences( getString(R.string.key_config), Context.MODE_PRIVATE );
+        mConfig = getActivity().getSharedPreferences(getString(R.string.key_config), Context.MODE_PRIVATE);
         mSchedule = Calendar.getInstance();
+        mClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
+                .addApi(LocationServices.API)
+                .build();
     }
 
     @Override
@@ -99,7 +112,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false);
         if (getArguments() != null) {
             Gson gson = new Gson();
-            mData = gson.fromJson( getArguments().getString("data"), AlarmRealmData.class);
+            mData = gson.fromJson(getArguments().getString("data"), AlarmRealmData.class);
             mSchedule.setTime(mData.getDate());
         } else {
             mData = null;
@@ -116,8 +129,8 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
             mBinding.etContext.setText(mData.getContent());
         }
 
-        mBinding.tvDate.setText( formatDate() );
-        mBinding.tvTime.setText( formatTime() );
+        mBinding.tvDate.setText(formatDate());
+        mBinding.tvTime.setText(formatTime());
         initMap();
         initOnClick();
     }
@@ -200,10 +213,10 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
     // Initialize Google Map
     private void initMap() {
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         autocompleteFragment.setOnPlaceSelectedListener(this);
 
-        CustomMapFragment mapFragment = (CustomMapFragment)getActivity().getFragmentManager().findFragmentById(R.id.google_map_fragment);
+        CustomMapFragment mapFragment = (CustomMapFragment) getActivity().getFragmentManager().findFragmentById(R.id.google_map_fragment);
         mapFragment.setParent(mBinding.scroll);
         mapFragment.getMapAsync(this);
 
@@ -216,10 +229,38 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     public AlarmRealmData getAlarmData() {
         Log.d(TAG, "isData=" + isDate + ",isLocation=" + isLocation);
         if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) { //Checking empty
-            AlarmRealmData data = new AlarmRealmData(mBinding.etTitle.getText().toString(), mBinding.etContext.getText().toString(), System.currentTimeMillis());
+            AlarmRealmData data = new AlarmRealmData(mBinding.etTitle.getText().toString(), mBinding.etContext.getText().toString(), System.currentTimeMillis() + "");
             if (isLocation) {
                 // TODO: 2017/08/06 Geofence
                 Log.d(TAG, "Location is true");
+                Geofence geofence = new Geofence.Builder()
+                        .setRequestId(data.getGeofenceId())
+                        .setCircularRegion(mTargetLocation.latitude, mTargetLocation.longitude, 1000)
+                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
+                        .setLoiteringDelay(10 * 1000)
+                        .build();
+
+                GeofencingRequest request = new GeofencingRequest.Builder()
+                        .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_DWELL)
+                        .addGeofence(geofence)
+                        .build();
+
+                Intent intent = new Intent(getActivity().getApplicationContext(), AlarmReceiver.class);
+                // Put notification's data
+                intent.putExtra("title", data.getTitle());
+                intent.putExtra("content", data.getContent());
+                intent.putExtra("id", data.getGeofenceId());
+                // For cancel notification
+                intent.setType(data.getGeofenceId());
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return null;
+                }
+                LocationServices.GeofencingApi.addGeofences(mClient, request, pendingIntent);
+                Log.d("RegistrationLocation", "Lat = " + mTargetLocation.latitude + ", Lng = " + mTargetLocation.longitude );
+
             }
             if (isDate) {
                 // Save when show Notification
@@ -235,7 +276,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
                 intent.putExtra("title", data.getTitle());
                 intent.putExtra("content", data.getContent());
                 // For cancel notification
-                intent.setType(data.getMadeDate() + "");
+                intent.setType(data.getGeofenceId());
 
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
@@ -260,6 +301,22 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         }
 
         return null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mClient != null) {
+            mClient.connect();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mClient != null) {
+            mClient.disconnect();
+        }
     }
 
     // To set a date

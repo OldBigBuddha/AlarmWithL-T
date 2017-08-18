@@ -37,4 +37,5 @@
     <string name="config_fragment_senior_mode_title">Senior Mode</string>
     <string name="config_fragment_senior_mode_summary">For senior</string>
     <string name="key_config">config</string>
+    <string name="no_permission">You didn\'t give me Permission\nYou can\'t make the alarm!</string>
 </resources>
