@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -55,6 +57,7 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
             bundle.putString("data", intent.getStringExtra("data"));
             mFragment.setArguments(bundle);
         }
+        mFragment.getView().setBackgroundColor(Color.BLACK);
 
         initToolbar();
         mRealm = Realm.getDefaultInstance(); // Initialize Realm

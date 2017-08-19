@@ -3,6 +3,7 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +31,9 @@ public class ShowDataActivity extends AppCompatActivity {
 
     private Realm mRealm;
     private RealmResults<AlarmRealmData> mResults;
+
+    private SharedPreferences mConfig;
+
 
     private ItemTouchHelper mHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
         @Override
@@ -63,6 +67,16 @@ public class ShowDataActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
+        boolean isNightMode = mConfig.getBoolean( getString(R.string.key_is_night_mode), false );
+        if ( isNightMode ) {
+            setTheme(R.style.DarkTheme);
+        } else {
+            setTheme(R.style.LightTheme);
+        }
+
+
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_show_data);
 
         mRealm = Realm.getDefaultInstance();
