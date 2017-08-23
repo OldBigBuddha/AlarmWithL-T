@@ -24,6 +24,9 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
 import io.realm.Realm;
 
+import static android.support.design.R.color.background_material_dark;
+import static android.support.design.R.color.primary_dark_material_dark;
+
 public class FormActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     private final String TAG = getClass().getSimpleName();
@@ -57,7 +60,6 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
             bundle.putString("data", intent.getStringExtra("data"));
             mFragment.setArguments(bundle);
         }
-        mFragment.getView().setBackgroundColor(Color.BLACK);
 
         initToolbar();
         mRealm = Realm.getDefaultInstance(); // Initialize Realm
