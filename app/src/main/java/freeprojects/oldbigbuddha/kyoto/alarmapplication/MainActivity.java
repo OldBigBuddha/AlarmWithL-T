@@ -25,18 +25,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
+
+        // Check Night Mode
         boolean isNightMode = mConfig.getBoolean( getString(R.string.key_is_night_mode), false );
         if ( isNightMode ) {
             setTheme(R.style.DarkTheme);
         } else {
             setTheme(R.style.LightTheme);
         }
+
         ActivityMainBinding binding = DataBindingUtil.setContentView( this, R.layout.activity_main );
         binding.setViewModel( new MainViewModel() );
         binding.setTitle( getString( R.string.title_home ) );
-
         setSupportActionBar(binding.toolbarMain);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (isNightMode) {
             binding.btNew.setBackground( getDrawable(R.drawable.shape_rouded_corners_30dp_dark) );

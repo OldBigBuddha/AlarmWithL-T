@@ -21,12 +21,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Realm.init(context);
         NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
         String title = intent.getStringExtra("title");
         String content = intent.getStringExtra("content");
-        final String id = intent.getStringExtra("id");
+        String id = intent.getStringExtra("id");
 
         builder.setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
