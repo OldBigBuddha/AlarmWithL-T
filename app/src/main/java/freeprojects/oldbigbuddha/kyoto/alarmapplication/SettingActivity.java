@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -34,7 +35,13 @@ public class SettingActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        startActivity(new Intent(this, MainActivity.class));
+        onBackPressed();
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        startActivity( new Intent(getApplicationContext(), MainActivity.class) );
+    }
+
 }
