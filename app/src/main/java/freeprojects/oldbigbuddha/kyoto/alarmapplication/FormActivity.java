@@ -56,10 +56,8 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
         Intent intent = getIntent();
         mFragment = (SettingFragment)getSupportFragmentManager().findFragmentById(R.id.setting_fragment);
-        if ( intent.getStringExtra("data") != null ) {
-            Bundle bundle = new Bundle();
-            bundle.putString("data", intent.getStringExtra("data"));
-            mFragment.setArguments(bundle);
+        if ( intent.getStringExtra( getString( R.string.key_title ) ) != null ) {
+            mFragment.setArguments(intent.getExtras());
         }
 
         initToolbar();

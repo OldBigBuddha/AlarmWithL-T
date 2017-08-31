@@ -91,21 +91,8 @@ public class ShowDataActivity extends AppCompatActivity {
         adapter.setListener(new CustomRecyclerAdapter.AdapterListener() {
             @Override
             public void OnItemClick(int position) {
-                AlarmRealmData data = mResults.get(position);
                 ShowDateDialogFragment fragment = ShowDateDialogFragment.newInstance();
-
-                Bundle args = new Bundle();
-                args.putString( getString(R.string.key_title), data.getTitle() );
-                args.putString( getString(R.string.key_content), data.getContent());
-                args.putBoolean( getString(R.string.key_is_location), data.isLocation());
-                if (data.getDate() != null) {
-                    args.putLong( getString(R.string.key_data), data.getDate().getTime() );
-                }
-                if (data.isLocation()) {
-                    args.putDouble( getString(R.string.key_latitude), data.getLatitude() );
-                    args.putDouble( getString(R.string.key_longitude), data.getLongitude() );
-                }
-                fragment.setArguments(args);
+                fragment.setArguments( sendDate( mResults.get(position) ) );
 
                 fragment.show(getSupportFragmentManager(), "ShowDateFragment");
             }
@@ -114,10 +101,9 @@ public class ShowDataActivity extends AppCompatActivity {
             public void OnClickEditButton(int position) {
                 Log.d("onClickEditButton", "OnClicked");
 //                AlarmRealmData data = mResults.get(position);
-//                Intent intent = new Intent(getApplicationContext(), FormActivity.class);
-//                Gson gson = new Gson();
-//                intent.putExtra("data", gson.toJson(data));
-//                startActivity(intent);
+                Intent intent = new Intent(ShowDataActivity.this, FormActivity.class);
+                intent.putExtras( sendDate( mResults.get(position) ) );
+                startActivity(intent);
             }
         });
         mBinding.recycler.setAdapter(adapter);
@@ -125,8 +111,22 @@ public class ShowDataActivity extends AppCompatActivity {
         mBinding.recycler.addItemDecoration(mHelper);
     }
 
-    private String formatData(long data) {
-        return new SimpleDateFormat("yyyy/MM/dd HH:mm").format(data);
+    private Bundle sendDate(AlarmRealmData data) {
+        Bundle args = new Bundle();
+        args.putString( getString(R.string.key_title), data.getTitle() );
+        args.putString( getString(R.string.key_content), data.getContent());
+        args.putBoolean( getString(R.string.key_is_location), data.isLocation());
+        if (data.getDate() != null) {
+            args.putLong( getString(R.string.key_data), data.getDate().getTime() );
+        } else {
+            args.putLong( getString(R.string.key_data), 0 );
+        }
+        if (data.isLocation()) {
+            args.putDouble( getString(R.string.key_latitude), data.getLatitude() );
+            args.putDouble( getString(R.string.key_longitude), data.getLongitude() );
+        }
+
+        return args;
     }
 
 }

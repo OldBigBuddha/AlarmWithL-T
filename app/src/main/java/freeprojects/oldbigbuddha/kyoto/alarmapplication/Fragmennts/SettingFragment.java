@@ -48,6 +48,7 @@ import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.MainActivity;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers.AlarmReceiver;
@@ -65,6 +66,8 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
+
+    private boolean isEditing = false;
 
     public FragmentSettingBinding mBinding;
 
@@ -99,6 +102,32 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         mClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
                 .addApi(LocationServices.API)
                 .build();
+
+
+        if (getArguments() != null) {
+            isEditing = true;
+            mData = new AlarmRealmData(
+                    getArguments().getString( getString(R.string.key_title)),
+                    getArguments().getString( getString(R.string.key_content)),
+                    getArguments().getString( getString(R.string.key_created_data))
+            );
+            mData.setLocation( getArguments().getBoolean( getString(R.string.key_is_location) ) );
+            if (mData.isLocation()) {
+                mTargetLocation = new LatLng( getArguments().getDouble( getString(R.string.key_latitude) ), getArguments().getDouble( getString(R.string.key_longitude) ) );
+            }
+            long data = getArguments().getLong( getString(R.string.key_data) );
+            if (data != 0) {
+                mData.setDate( new Date(data) );
+                mSchedule.setTime( mData.getDate() );
+            }
+
+//            Gson gson = new Gson();
+//            mData = gson.fromJson(getArguments().getString("data"), AlarmRealmData.class);
+//            mSchedule.setTime(mData.getDate());
+        } else {
+            mData = null;
+        }
+
     }
 
     @Override
@@ -107,12 +136,9 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         // Inflate the layout for this fragment
         Log.d("config", "onCreateView");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false);
-        if (getArguments() != null) {
-            Gson gson = new Gson();
-            mData = gson.fromJson(getArguments().getString("data"), AlarmRealmData.class);
-            mSchedule.setTime(mData.getDate());
-        } else {
-            mData = null;
+        if (mData != null) {
+            mBinding.etTitle.setText( mData.getTitle() );
+            mBinding.etContext.setText( mData.getContent() );
         }
         return mBinding.getRoot();
     }
@@ -226,54 +252,75 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     public AlarmRealmData getAlarmData() {
         Log.d(TAG, "isData=" + isDate + ",isLocation=" + isLocation);
         if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) { //Checking empty
-            AlarmRealmData data = new AlarmRealmData(mBinding.etTitle.getText().toString(), mBinding.etContext.getText().toString(), System.currentTimeMillis() + "");
-            data.setLocation(isLocation);
-            if (isLocation) {
-                Log.d(TAG, "Location is true");
-                // Check Permission
-                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            if (!isEditing) {
+                try {
+                    makeDate(mBinding.etTitle.getText().toString(), mBinding.etContext.getText().toString(), System.currentTimeMillis());
+                } catch (NullPointerException e) {
                     return null;
                 }
-
-                LocationServices.GeofencingApi.addGeofences(mClient, settingGeofence(data), settingAlarm(data));
-                data.setLatitude(mTargetLocation.latitude);
-                data.setLongitude(mTargetLocation.longitude);
-                Log.i("RegistrationLocation", "Lat = " + data.getLatitude() + ", Lng = " + data.getLongitude() );
-            }
-            if (isDate) {
-                Log.d(TAG, "Data is true");
-
-                mSchedule.set(Calendar.SECOND, 0);
-                data.setDate(mSchedule.getTime()); // Set when show
-
-                // Debugging data when show Alarm
-                Log.i("mSchedule", mSchedule.get(Calendar.YEAR) + "/" + (mSchedule.get(Calendar.MONTH) + 1) + "/" + mSchedule.get(Calendar.DAY_OF_MONTH));
-                Log.i("mSchedule", mSchedule.get(Calendar.HOUR_OF_DAY) + ":" + mSchedule.get(Calendar.MINUTE));
-
-                AlarmManager manager = (AlarmManager)getActivity().getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                if (Build.VERSION.SDK_INT >= 18) {
-                    manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(data));
-                } else if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 23) {
-                    manager.setExact(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(data));
-                } else {
-                    manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(data));
+            } else {
+                try {
+                    makeDate();
+                } catch (NullPointerException e) {
+                    return null;
                 }
             }
 
-            // Re-initialize EditText Field
-            mBinding.etTitle.setText("");
-            mBinding.etContext.setText("");
-            return data;
+            return mData;
 
         } else if (TextUtils.isEmpty(mBinding.etTitle.getText())) {
             Snackbar snackbar = Snackbar.make(mBinding.parent, getString(R.string.message_error_null_title), Snackbar.LENGTH_SHORT);
             snackbar.show();
+
         } else if (TextUtils.isEmpty(mBinding.etContext.getText())) {
             Snackbar snackbar = Snackbar.make(mBinding.parent, getString(R.string.message_error_null_context), Snackbar.LENGTH_SHORT);
             snackbar.show();
         }
 
         return null;
+    }
+
+    private void makeDate(String title, String content, long data) throws NullPointerException{
+        mData = new AlarmRealmData(title, content, data + "");
+        makeDate();
+
+    }
+
+    private void makeDate() throws NullPointerException {
+        mData.setLocation(isLocation);
+        if (isLocation) {
+            Log.d(TAG, "Location is true");
+            // Check Permission
+            if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                new NullPointerException();
+            }
+
+            LocationServices.GeofencingApi.addGeofences(mClient, settingGeofence(mData), settingAlarm(mData));
+            mData.setLatitude(mTargetLocation.latitude);
+            mData.setLongitude(mTargetLocation.longitude);
+            Log.i("RegistrationLocation", "Lat = " + mData.getLatitude() + ", Lng = " + mData.getLongitude());
+        }
+        if (isDate) {
+            Log.d(TAG, "Data is true");
+
+            mSchedule.set(Calendar.SECOND, 0);
+            mData.setDate(mSchedule.getTime()); // Set when show
+
+            // Debugging data when show Alarm
+            Log.i("mSchedule", mSchedule.get(Calendar.YEAR) + "/" + (mSchedule.get(Calendar.MONTH) + 1) + "/" + mSchedule.get(Calendar.DAY_OF_MONTH));
+            Log.i("mSchedule", mSchedule.get(Calendar.HOUR_OF_DAY) + ":" + mSchedule.get(Calendar.MINUTE));
+
+            AlarmManager manager = (AlarmManager) getActivity().getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+            if (Build.VERSION.SDK_INT >= 18) {
+                manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
+            } else if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 23) {
+                manager.setExact(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
+            } else {
+                manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
+            }
+
+        }
     }
 
     // Setting Geofence

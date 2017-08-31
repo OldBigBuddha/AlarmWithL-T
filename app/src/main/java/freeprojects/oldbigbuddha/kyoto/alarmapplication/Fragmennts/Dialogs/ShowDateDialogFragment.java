@@ -39,38 +39,26 @@ public class ShowDateDialogFragment extends DialogFragment {
         return new ShowDateDialogFragment();
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            getDate(savedInstanceState);
-        }
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.fragment_show_date, null);
+        getDate( getArguments() );
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_show_date, null);
+
+        ((TextView)view.findViewById(R.id.tv_title_fragment)).setText( mTitle );
+        ((TextView)view.findViewById(R.id.tv_content_fragment)).setText( mContent );
+        if (mData != 0) {
+            ((TextView)view.findViewById(R.id.tv_schedule_fragment)).setText( formatData( mData ) );
+        }
+        if (isLocation) {
+            ((TextView)view.findViewById(R.id.tv_location_fragment)).setText( mLatitude + "," + mLongitude );
+        }
+
         builder.setView(view)
                 .setPositiveButton("OK", null);
 
         return builder.create();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        ((TextView)getDialog().findViewById(R.id.tv_title_fragment)).setText( mTitle );
-        ((TextView)getDialog().findViewById(R.id.tv_content_fragment)).setText( mContent );
-        if (mData != 0) {
-            ((TextView)getDialog().findViewById(R.id.tv_schedule_fragment)).setText( formatData( mData ) );
-        }
-        if (isLocation) {
-            ((TextView)getDialog().findViewById(R.id.tv_location_fragment)).setText( mLatitude + "," + mLongitude );
-        }
-
     }
 
     private String formatData(long data) {
