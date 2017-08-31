@@ -2,6 +2,7 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts;
 
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -83,6 +85,8 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     private Calendar mSchedule;
 
     private GoogleApiClient mClient;
+
+    private static final int GEOFENCE_CIRCLE_RADIUS = 500;
 
     public SettingFragment() {
         // Required empty public constructor
@@ -176,7 +180,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     private void makeMarker(String name) {
         markerRemove();
         mMarkerOptions.position(mTargetLocation);
-        mCircleOptions.center(mTargetLocation).radius(100);
+        mCircleOptions.center(mTargetLocation).radius(GEOFENCE_CIRCLE_RADIUS);
         if (name != null) {
             mMarkerOptions.title(name);
         }
@@ -223,6 +227,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         Log.d(TAG, "isData=" + isDate + ",isLocation=" + isLocation);
         if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) { //Checking empty
             AlarmRealmData data = new AlarmRealmData(mBinding.etTitle.getText().toString(), mBinding.etContext.getText().toString(), System.currentTimeMillis() + "");
+            data.setLocation(isLocation);
             if (isLocation) {
                 Log.d(TAG, "Location is true");
                 // Check Permission
@@ -231,7 +236,9 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
                 }
 
                 LocationServices.GeofencingApi.addGeofences(mClient, settingGeofence(data), settingAlarm(data));
-                Log.i("RegistrationLocation", "Lat = " + mTargetLocation.latitude + ", Lng = " + mTargetLocation.longitude );
+                data.setLatitude(mTargetLocation.latitude);
+                data.setLongitude(mTargetLocation.longitude);
+                Log.i("RegistrationLocation", "Lat = " + data.getLatitude() + ", Lng = " + data.getLongitude() );
             }
             if (isDate) {
                 Log.d(TAG, "Data is true");
@@ -244,7 +251,13 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
                 Log.i("mSchedule", mSchedule.get(Calendar.HOUR_OF_DAY) + ":" + mSchedule.get(Calendar.MINUTE));
 
                 AlarmManager manager = (AlarmManager)getActivity().getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(data) );
+                if (Build.VERSION.SDK_INT >= 18) {
+                    manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(data));
+                } else if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 23) {
+                    manager.setExact(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(data));
+                } else {
+                    manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(data));
+                }
             }
 
             // Re-initialize EditText Field
@@ -267,7 +280,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     public GeofencingRequest settingGeofence(AlarmRealmData data) {
         Geofence geofence = new Geofence.Builder()
                 .setRequestId(data.getGeofenceId())
-                .setCircularRegion(mTargetLocation.latitude, mTargetLocation.longitude, 1000)
+                .setCircularRegion(mTargetLocation.latitude, mTargetLocation.longitude, GEOFENCE_CIRCLE_RADIUS)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                 .build();

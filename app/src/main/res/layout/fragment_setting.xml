@@ -19,7 +19,8 @@
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/title" />
+                android:hint="@string/title"
+                android:maxLines="1"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -33,7 +34,8 @@
                 android:id="@+id/etContext"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/content" />
+                android:hint="@string/content"
+                android:maxLines="1"/>
         </android.support.design.widget.TextInputLayout>
 
         <ScrollView

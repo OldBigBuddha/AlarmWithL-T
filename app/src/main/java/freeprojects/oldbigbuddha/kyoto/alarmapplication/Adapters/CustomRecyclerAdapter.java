@@ -1,5 +1,6 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication.Adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -18,10 +19,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.BR;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.MainActivity;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentDialogTimeBinding;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentShowDateBinding;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.RowBinding;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -60,12 +63,13 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         AlarmRealmData data = mResults.get(position);
+        holder.binding.setPosition(position + 1 + "");
         Log.d("toString", data.toString());
-        holder.tvIndex.setText( (position + 1) + "");
-        holder.tvTitle.setText(data.getTitle());
-        holder.tvCreatedData.setText( formatData( Long.parseLong( data.getGeofenceId() )) );
+
+        holder.binding.tvTitle.setText(data.getTitle());
+        holder.binding.tvCreatedData.setText( formatData( Long.parseLong( data.getGeofenceId() )) );
         if (data.getDate() != null) {
-            holder.tvAlarmData.setText( formatData(data.getDate().getTime()) );
+            holder.binding.tvAlarmData.setText( formatData(data.getDate().getTime()) );
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +77,13 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
             public void onClick(View v) {
                 Log.d("OnItemClick", "OnClick");
                 mListener.OnItemClick(position);
+            }
+        });
+        holder.binding.ibEditData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("OnClickEditButton", "OnClick");
+                mListener.OnClickEditButton(position);
             }
         });
     }
@@ -96,24 +107,11 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView tvIndex;
-        public TextView tvTitle, tvCreatedData, tvAlarmData;
-        public ImageButton ibEdit;
+        public RowBinding binding;
 
         public ViewHolder(View view) {
             super(view);
-            tvIndex = (TextView)view.findViewById(R.id.tv_index);
-            tvTitle = (TextView)view.findViewById(R.id.tv_title);
-            tvCreatedData = (TextView)view.findViewById(R.id.tv_created_data);
-            tvAlarmData   = (TextView)view.findViewById(R.id.tv_alarm_data);
-            ibEdit  = (ImageButton)view.findViewById(R.id.ib_edit_data);
-            ibEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(mContext, "OnClicked", Toast.LENGTH_LONG).show();
-                    mListener.OnClickEditButton(getAdapterPosition());
-                }
-            });
+            binding = DataBindingUtil.bind(view);
         }
     }
 }

@@ -38,4 +38,12 @@
     <string name="config_fragment_senior_mode_summary">For senior</string>
     <string name="key_config">config</string>
     <string name="no_permission">You didn\'t give me Permission\nYou can\'t make the alarm!</string>
+    <string name="key_title">title</string>
+    <string name="key_content">content</string>
+    <string name="key_created_data">createdData</string>
+    <string name="key_alarm_data">alarmData</string>
+    <string name="key_is_location">isLocation</string>
+    <string name="key_latitude">latitude</string>
+    <string name="key_longitude">longitude</string>
+    <string name="key_data">data</string>
 </resources>
