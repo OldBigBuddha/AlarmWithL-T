@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,18 +25,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
+
+        // Check Night Mode
         boolean isNightMode = mConfig.getBoolean( getString(R.string.key_is_night_mode), false );
         if ( isNightMode ) {
             setTheme(R.style.DarkTheme);
         } else {
             setTheme(R.style.LightTheme);
         }
+
         ActivityMainBinding binding = DataBindingUtil.setContentView( this, R.layout.activity_main );
         binding.setViewModel( new MainViewModel() );
         binding.setTitle( getString( R.string.title_home ) );
-
         setSupportActionBar(binding.toolbarMain);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (isNightMode) {
             binding.btNew.setBackground( getDrawable(R.drawable.shape_rouded_corners_30dp_dark) );
@@ -58,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO: 8/10/17 設定画面への遷移
         if (item.getItemId() == R.id.setting_menu) {
             startActivity( new Intent(this, SettingActivity.class) );
         }

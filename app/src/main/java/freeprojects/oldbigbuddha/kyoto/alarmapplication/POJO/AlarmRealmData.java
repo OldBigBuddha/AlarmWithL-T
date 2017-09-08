@@ -17,6 +17,10 @@ public class AlarmRealmData extends RealmObject {
     private String content;
     private String title;
     private Date date;
+    private boolean isLocation;
+
+    private double latitude;
+    private double longitude;
 
     public AlarmRealmData() {}
 
@@ -24,6 +28,7 @@ public class AlarmRealmData extends RealmObject {
         this.title = title;
         this.content = context;
         geofenceId = id;
+        date = null;
     }
 
     @Override
@@ -76,5 +81,29 @@ public class AlarmRealmData extends RealmObject {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public boolean isLocation() {
+        return isLocation;
+    }
+
+    public void setLocation(boolean location) {
+        isLocation = location;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

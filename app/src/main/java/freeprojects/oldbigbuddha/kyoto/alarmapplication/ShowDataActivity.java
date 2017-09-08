@@ -15,10 +15,12 @@ import android.view.View;
 
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Adapters.CustomRecyclerAdapter;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.ShowDateDialogFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers.AlarmReceiver;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityShowDataBinding;
@@ -85,20 +87,46 @@ public class ShowDataActivity extends AppCompatActivity {
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mBinding.recycler.setLayoutManager(manager);
-        CustomRecyclerAdapter adapter = new CustomRecyclerAdapter(mResults, getApplicationContext());
+        final CustomRecyclerAdapter adapter = new CustomRecyclerAdapter(mResults, getApplicationContext());
         adapter.setListener(new CustomRecyclerAdapter.AdapterListener() {
             @Override
-            public void OnClickEditButton(View view, int position) {
+            public void OnItemClick(int position) {
+                ShowDateDialogFragment fragment = ShowDateDialogFragment.newInstance();
+                fragment.setArguments( sendDate( mResults.get(position) ) );
+
+                fragment.show(getSupportFragmentManager(), "ShowDateFragment");
+            }
+
+            @Override
+            public void OnClickEditButton(int position) {
                 Log.d("onClickEditButton", "OnClicked");
-                AlarmRealmData data = mResults.get(position);
+//                AlarmRealmData data = mResults.get(position);
                 Intent intent = new Intent(ShowDataActivity.this, FormActivity.class);
-                Gson gson = new Gson();
-                intent.putExtra("data", gson.toJson(data));
+                intent.putExtras( sendDate( mResults.get(position) ) );
                 startActivity(intent);
             }
         });
-        mBinding.recycler.setAdapter(new CustomRecyclerAdapter(mResults, getApplicationContext()));
+        mBinding.recycler.setAdapter(adapter);
         mHelper.attachToRecyclerView(mBinding.recycler);
         mBinding.recycler.addItemDecoration(mHelper);
     }
+
+    private Bundle sendDate(AlarmRealmData data) {
+        Bundle args = new Bundle();
+        args.putString( getString(R.string.key_title), data.getTitle() );
+        args.putString( getString(R.string.key_content), data.getContent());
+        args.putBoolean( getString(R.string.key_is_location), data.isLocation());
+        if (data.getDate() != null) {
+            args.putLong( getString(R.string.key_data), data.getDate().getTime() );
+        } else {
+            args.putLong( getString(R.string.key_data), 0 );
+        }
+        if (data.isLocation()) {
+            args.putDouble( getString(R.string.key_latitude), data.getLatitude() );
+            args.putDouble( getString(R.string.key_longitude), data.getLongitude() );
+        }
+
+        return args;
+    }
+
 }

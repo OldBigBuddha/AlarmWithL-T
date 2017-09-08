@@ -1,5 +1,6 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication.Adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -14,13 +15,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.BR;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.MainActivity;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentDialogTimeBinding;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentShowDateBinding;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.RowBinding;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -36,7 +40,8 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
 
     private AdapterListener mListener;
     public interface AdapterListener {
-        void OnClickEditButton(View view, int position);
+        void OnClickEditButton(int position);
+        void OnItemClick(int position);
     }
 
     public void setListener(AdapterListener listener) {
@@ -56,15 +61,29 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         AlarmRealmData data = mResults.get(position);
+        holder.binding.setPosition(position + 1 + "");
         Log.d("toString", data.toString());
-        holder.tvIndex.setText( (position + 1) + "");
-        holder.tvTitle.setText(data.getTitle());
-        holder.ibEdit.setOnClickListener(new View.OnClickListener() {
+
+        holder.binding.tvTitle.setText(data.getTitle());
+        holder.binding.tvCreatedData.setText( formatData( Long.parseLong( data.getGeofenceId() )) );
+        if (data.getDate() != null) {
+            holder.binding.tvAlarmData.setText( formatData(data.getDate().getTime()) );
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "ItemClicked", Toast.LENGTH_SHORT).show();
+                Log.d("OnItemClick", "OnClick");
+                mListener.OnItemClick(position);
+            }
+        });
+        holder.binding.ibEditData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("OnClickEditButton", "OnClick");
+                mListener.OnClickEditButton(position);
             }
         });
     }
@@ -82,24 +101,17 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
 
     }
 
+    private String formatData(long data) {
+        return new SimpleDateFormat("yyyy/MM/dd HH:mm").format(data);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView tvIndex;
-        public TextView tvTitle;
-        public ImageButton ibEdit;
+        public RowBinding binding;
 
         public ViewHolder(View view) {
             super(view);
-            tvIndex = (TextView)view.findViewById(R.id.tv_index);
-            tvTitle = (TextView)view.findViewById(R.id.tv_title);
-            ibEdit  = (ImageButton)view.findViewById(R.id.ib_edit_data);
-            ibEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(mContext, "OnClicked", Toast.LENGTH_LONG).show();
-                    mListener.OnClickEditButton(v, getAdapterPosition());
-                }
-            });
+            binding = DataBindingUtil.bind(view);
         }
     }
 }

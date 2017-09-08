@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+    <data>
+        <variable
+            name="date"
+            type="freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData" />
+        <variable
+            name="position"
+            type="String" />
+    </data>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -8,9 +16,9 @@
 
     <TextView
         android:id="@+id/tv_index"
-        android:text="00"
+        android:text="@{position}"
         android:textColor="#000"
-        android:textSize="18sp"
+        android:textSize="8sp"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -20,11 +28,29 @@
     <TextView
         android:id="@+id/tv_title"
         android:textColor="#000"
-        android:textSize="32dp"
+        android:textSize="12dp"
         android:gravity="left|center"
-        android:layout_weight="4"
+        android:layout_weight="3"
         android:layout_width="0dp"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tv_created_data"
+        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textSize="9sp"
+        android:gravity="bottom|center"
+        android:layout_margin="4dp"/>
+
+    <TextView
+        android:id="@+id/tv_alarm_data"
+        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textSize="8sp"
+        android:gravity="bottom|center"
+        android:layout_margin="4dp"/>
 
     <ImageButton
         android:id="@+id/ib_edit_data"
@@ -33,7 +59,8 @@
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_gravity="center"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"/>
 
 </LinearLayout>
 </layout>

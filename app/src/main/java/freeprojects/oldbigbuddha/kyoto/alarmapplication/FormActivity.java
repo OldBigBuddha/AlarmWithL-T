@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -23,6 +24,9 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.SettingFragme
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
 import io.realm.Realm;
+
+import static android.support.design.R.color.background_material_dark;
+import static android.support.design.R.color.primary_dark_material_dark;
 
 public class FormActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 
@@ -54,11 +58,17 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
 
         Intent intent = getIntent();
+<<<<<<< HEAD
         mFragment = (SettingFragment)getFragmentManager().findFragmentById(R.id.setting_fragment);
         if ( intent.getStringExtra("data") != null ) {
             Bundle bundle = new Bundle();
             bundle.putString("data", intent.getStringExtra("data"));
             mFragment.setArguments(bundle);
+=======
+        mFragment = (SettingFragment)getSupportFragmentManager().findFragmentById(R.id.setting_fragment);
+        if ( intent.getStringExtra( getString( R.string.key_title ) ) != null ) {
+            mFragment.setArguments(intent.getExtras());
+>>>>>>> 3886abf48bac6dca505b3c143744163d5f457c01
         }
 
         initToolbar();

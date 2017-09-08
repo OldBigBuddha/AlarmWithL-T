@@ -2,15 +2,16 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts;
 
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,7 +48,12 @@ import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+<<<<<<< HEAD
+=======
+import java.util.Date;
+>>>>>>> 3886abf48bac6dca505b3c143744163d5f457c01
 
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.MainActivity;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers.AlarmReceiver;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.DateDialogFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.TimeDialogFragment;
@@ -63,6 +69,8 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
+
+    private boolean isEditing = false;
 
     public FragmentSettingBinding mBinding;
 
@@ -84,7 +92,11 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
     private GoogleApiClient mClient;
 
+<<<<<<< HEAD
     public SettingFragment() {}
+=======
+    private static final int GEOFENCE_CIRCLE_RADIUS = 500;
+>>>>>>> 3886abf48bac6dca505b3c143744163d5f457c01
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -97,6 +109,32 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         mClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
                 .addApi(LocationServices.API)
                 .build();
+
+
+        if (getArguments() != null) {
+            isEditing = true;
+            mData = new AlarmRealmData(
+                    getArguments().getString( getString(R.string.key_title)),
+                    getArguments().getString( getString(R.string.key_content)),
+                    getArguments().getString( getString(R.string.key_created_data))
+            );
+            mData.setLocation( getArguments().getBoolean( getString(R.string.key_is_location) ) );
+            if (mData.isLocation()) {
+                mTargetLocation = new LatLng( getArguments().getDouble( getString(R.string.key_latitude) ), getArguments().getDouble( getString(R.string.key_longitude) ) );
+            }
+            long data = getArguments().getLong( getString(R.string.key_data) );
+            if (data != 0) {
+                mData.setDate( new Date(data) );
+                mSchedule.setTime( mData.getDate() );
+            }
+
+//            Gson gson = new Gson();
+//            mData = gson.fromJson(getArguments().getString("data"), AlarmRealmData.class);
+//            mSchedule.setTime(mData.getDate());
+        } else {
+            mData = null;
+        }
+
     }
 
     @Override
@@ -105,12 +143,9 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         // Inflate the layout for this fragment
         Log.d("config", "onCreateView");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false);
-        if (getArguments() != null) {
-            Gson gson = new Gson();
-            mData = gson.fromJson(getArguments().getString("data"), AlarmRealmData.class);
-            mSchedule.setTime(mData.getDate());
-        } else {
-            mData = null;
+        if (mData != null) {
+            mBinding.etTitle.setText( mData.getTitle() );
+            mBinding.etContext.setText( mData.getContent() );
         }
         return mBinding.getRoot();
     }
@@ -178,7 +213,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     private void makeMarker(String name) {
         markerRemove();
         mMarkerOptions.position(mTargetLocation);
-        mCircleOptions.center(mTargetLocation).radius(100);
+        mCircleOptions.center(mTargetLocation).radius(GEOFENCE_CIRCLE_RADIUS);
         if (name != null) {
             mMarkerOptions.title(name);
         }
@@ -224,78 +259,106 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     public AlarmRealmData getAlarmData() {
         Log.d(TAG, "isData=" + isDate + ",isLocation=" + isLocation);
         if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) { //Checking empty
-            AlarmRealmData data = new AlarmRealmData(mBinding.etTitle.getText().toString(), mBinding.etContext.getText().toString(), System.currentTimeMillis() + "");
-            if (isLocation) {
-                // TODO: 2017/08/06 Geofence
-                Log.d(TAG, "Location is true");
-                Geofence geofence = new Geofence.Builder()
-                        .setRequestId(data.getGeofenceId())
-                        .setCircularRegion(mTargetLocation.latitude, mTargetLocation.longitude, 1000)
-                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
-                        .setLoiteringDelay(10 * 1000)
-                        .build();
 
-                GeofencingRequest request = new GeofencingRequest.Builder()
-                        .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_DWELL)
-                        .addGeofence(geofence)
-                        .build();
-
-                Intent intent = new Intent(getActivity().getApplicationContext(), AlarmReceiver.class);
-                // Put notification's data
-                intent.putExtra("title", data.getTitle());
-                intent.putExtra("content", data.getContent());
-                intent.putExtra("id", data.getGeofenceId());
-                // For cancel notification
-                intent.setType(data.getGeofenceId());
-
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (!isEditing) {
+                try {
+                    makeDate(mBinding.etTitle.getText().toString(), mBinding.etContext.getText().toString(), System.currentTimeMillis());
+                } catch (NullPointerException e) {
                     return null;
                 }
-                LocationServices.GeofencingApi.addGeofences(mClient, request, pendingIntent);
-                Log.d("RegistrationLocation", "Lat = " + mTargetLocation.latitude + ", Lng = " + mTargetLocation.longitude );
-
-            }
-            if (isDate) {
-                // Save when show Notification
-                Log.d(TAG, "Data is true");
-                data.setDate(mSchedule.getTime());
-
-                mSchedule.set(Calendar.SECOND, 0);
-                data.setDate(mSchedule.getTime()); // Set when show
-
-                Context context = getActivity().getApplicationContext();
-                Intent intent = new Intent(context, AlarmReceiver.class);
-                // Put notification's data
-                intent.putExtra("title", data.getTitle());
-                intent.putExtra("content", data.getContent());
-                // For cancel notification
-                intent.setType(data.getGeofenceId());
-
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-
-                // Debugging data when show Alarm
-                Log.d("mSchedule", mSchedule.get(Calendar.YEAR) + "/" + (mSchedule.get(Calendar.MONTH) + 1) + "/" + mSchedule.get(Calendar.DAY_OF_MONTH));
-                Log.d("mSchedule", mSchedule.get(Calendar.HOUR_OF_DAY) + ":" + mSchedule.get(Calendar.MINUTE));
-
-                AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-                manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), pendingIntent);
+            } else {
+                try {
+                    makeDate();
+                } catch (NullPointerException e) {
+                    return null;
+                }
             }
 
-            // Re-initialize EditTexts
-            mBinding.etTitle.setText("");
-            mBinding.etContext.setText("");
-            return data;
+            return mData;
+
         } else if (TextUtils.isEmpty(mBinding.etTitle.getText())) {
             Snackbar snackbar = Snackbar.make(mBinding.parent, getString(R.string.message_error_null_title), Snackbar.LENGTH_SHORT);
             snackbar.show();
+
         } else if (TextUtils.isEmpty(mBinding.etContext.getText())) {
             Snackbar snackbar = Snackbar.make(mBinding.parent, getString(R.string.message_error_null_context), Snackbar.LENGTH_SHORT);
             snackbar.show();
         }
 
         return null;
+    }
+
+    private void makeDate(String title, String content, long data) throws NullPointerException{
+        mData = new AlarmRealmData(title, content, data + "");
+        makeDate();
+
+    }
+
+    private void makeDate() throws NullPointerException {
+        mData.setLocation(isLocation);
+        if (isLocation) {
+            Log.d(TAG, "Location is true");
+            // Check Permission
+            if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                new NullPointerException();
+            }
+
+            LocationServices.GeofencingApi.addGeofences(mClient, settingGeofence(mData), settingAlarm(mData));
+            mData.setLatitude(mTargetLocation.latitude);
+            mData.setLongitude(mTargetLocation.longitude);
+            Log.i("RegistrationLocation", "Lat = " + mData.getLatitude() + ", Lng = " + mData.getLongitude());
+        }
+        if (isDate) {
+            Log.d(TAG, "Data is true");
+
+            mSchedule.set(Calendar.SECOND, 0);
+            mData.setDate(mSchedule.getTime()); // Set when show
+
+            // Debugging data when show Alarm
+            Log.i("mSchedule", mSchedule.get(Calendar.YEAR) + "/" + (mSchedule.get(Calendar.MONTH) + 1) + "/" + mSchedule.get(Calendar.DAY_OF_MONTH));
+            Log.i("mSchedule", mSchedule.get(Calendar.HOUR_OF_DAY) + ":" + mSchedule.get(Calendar.MINUTE));
+
+            AlarmManager manager = (AlarmManager) getActivity().getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+            if (Build.VERSION.SDK_INT >= 18) {
+                manager.set(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
+            } else if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 23) {
+                manager.setExact(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
+            } else {
+                manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
+            }
+
+        }
+    }
+
+    // Setting Geofence
+    public GeofencingRequest settingGeofence(AlarmRealmData data) {
+        Geofence geofence = new Geofence.Builder()
+                .setRequestId(data.getGeofenceId())
+                .setCircularRegion(mTargetLocation.latitude, mTargetLocation.longitude, GEOFENCE_CIRCLE_RADIUS)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .build();
+
+        GeofencingRequest request = new GeofencingRequest.Builder()
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER )
+                .addGeofence(geofence)
+                .build();
+        return request;
+    }
+
+    // Setting Alarm
+    public PendingIntent settingAlarm(AlarmRealmData data) {
+        Context context = getActivity().getApplicationContext();
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        // Put notification's data
+        intent.putExtra("title", data.getTitle());
+        intent.putExtra("content", data.getContent());
+        intent.putExtra("id", data.getGeofenceId());
+        // For cancel notification
+        intent.setType(data.getGeofenceId());
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        return pendingIntent;
     }
 
     @Override
