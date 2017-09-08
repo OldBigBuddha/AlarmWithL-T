@@ -2,18 +2,12 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.NumberPicker;
-import android.widget.TimePicker;
 
 import java.util.Calendar;
 
@@ -21,7 +15,7 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentDialogTimeBinding;
 
 /**
- * Created by lifeistech on 2017/08/02.
+ * Created by BigBuddha on 2017/08/02.
  */
 
 public class TimeDialogFragment extends DialogFragment{
@@ -52,7 +46,7 @@ public class TimeDialogFragment extends DialogFragment{
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        mBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_time, null, false);
+        mBinding = DataBindingUtil.inflate(LayoutInflater.from(getActivity()), R.layout.fragment_dialog_time, null, false);
 
         builder.setView(mBinding.getRoot());
 

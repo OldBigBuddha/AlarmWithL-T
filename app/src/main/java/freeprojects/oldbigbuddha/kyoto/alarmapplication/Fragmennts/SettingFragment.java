@@ -16,10 +16,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +46,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers.AlarmReceiver;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.DateDialogFragment;
@@ -57,7 +54,6 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.TimeD
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentSettingBinding;
-import io.realm.Realm;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -88,16 +84,15 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
     private GoogleApiClient mClient;
 
-    private SharedPreferences mConfig;
+    public SettingFragment() {}
 
-    public SettingFragment() {
-        // Required empty public constructor
+    public static SettingFragment newInstance() {
+        return new SettingFragment();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mConfig = getActivity().getSharedPreferences(getString(R.string.key_config), Context.MODE_PRIVATE);
         mSchedule = Calendar.getInstance();
         mClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
                 .addApi(LocationServices.API)
@@ -368,7 +363,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
                     mBinding.tvDate.setText(formatDate());
                 }
             });
-            fragment.show(getActivity().getSupportFragmentManager(), "DataDialogFragment");
+            fragment.show(getActivity().getFragmentManager(), "DataDialogFragment");
         }
     };
 
@@ -384,7 +379,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
                     mBinding.tvTime.setText(formatTime());
                 }
             });
-            fragment.show(getActivity().getSupportFragmentManager(), "TimeDialogFragment");
+            fragment.show(getActivity().getFragmentManager(), "TimeDialogFragment");
         }
     };
 

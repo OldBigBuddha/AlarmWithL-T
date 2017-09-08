@@ -39,6 +39,8 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Check NightMode On/Off
         mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
         boolean isNightMode = mConfig.getBoolean( getString(R.string.key_is_night_mode), false );
         if ( isNightMode ) {
@@ -50,14 +52,14 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
         checkPermission();
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
+
         Intent intent = getIntent();
-        mFragment = (SettingFragment)getSupportFragmentManager().findFragmentById(R.id.setting_fragment);
+        mFragment = (SettingFragment)getFragmentManager().findFragmentById(R.id.setting_fragment);
         if ( intent.getStringExtra("data") != null ) {
             Bundle bundle = new Bundle();
             bundle.putString("data", intent.getStringExtra("data"));
             mFragment.setArguments(bundle);
         }
-        mFragment.getView().setBackgroundColor(Color.BLACK);
 
         initToolbar();
         mRealm = Realm.getDefaultInstance(); // Initialize Realm
@@ -113,6 +115,7 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    // Check ACCESS_FINE_LOCATION Permission
     private void checkPermission() {
         Log.d("onCreate", "checkPermission");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
