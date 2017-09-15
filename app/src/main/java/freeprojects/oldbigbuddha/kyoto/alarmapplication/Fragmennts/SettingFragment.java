@@ -48,12 +48,8 @@ import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-<<<<<<< HEAD
-=======
 import java.util.Date;
->>>>>>> 3886abf48bac6dca505b3c143744163d5f457c01
 
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.MainActivity;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers.AlarmReceiver;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.DateDialogFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.TimeDialogFragment;
@@ -92,11 +88,9 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
     private GoogleApiClient mClient;
 
-<<<<<<< HEAD
-    public SettingFragment() {}
-=======
     private static final int GEOFENCE_CIRCLE_RADIUS = 500;
->>>>>>> 3886abf48bac6dca505b3c143744163d5f457c01
+
+    public SettingFragment() {}
 
     public static SettingFragment newInstance() {
         return new SettingFragment();

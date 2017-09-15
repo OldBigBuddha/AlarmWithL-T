@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
             setTheme(R.style.LightTheme);
         }
 
-        ActivityMainBinding binding = DataBindingUtil.setContentView( this, R.layout.activity_main );
+        ActivityMainBinding binding = DataBindingUtil.setContentView( this, R.layout.activity_main ); // Binding Layout
         binding.setViewModel( new MainViewModel() );
         binding.setTitle( getString( R.string.title_home ) );
         setSupportActionBar(binding.toolbarMain);

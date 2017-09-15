@@ -41,7 +41,7 @@ public class SettingActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity( new Intent(getApplicationContext(), MainActivity.class) );
+        startActivity( new Intent(SettingActivity.this, MainActivity.class) );
     }
 
 }
