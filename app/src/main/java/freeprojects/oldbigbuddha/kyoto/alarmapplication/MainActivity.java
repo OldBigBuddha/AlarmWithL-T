@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
 
+//        startActivity(new Intent(MainActivity.this, SeniorSettingActivity.class));
+
         // Check Night Mode
         boolean isNightMode = mConfig.getBoolean( getString(R.string.key_is_night_mode), false );
         if ( isNightMode ) {

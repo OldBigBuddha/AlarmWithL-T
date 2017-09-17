@@ -45,9 +45,9 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
         super.onCreate(savedInstanceState);
 
         // Check NightMode On/Off
-        mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
-        boolean isNightMode = mConfig.getBoolean( getString(R.string.key_is_night_mode), false );
-        if ( isNightMode ) {
+        mConfig = getSharedPreferences(getString(R.string.key_config), MODE_PRIVATE);
+        boolean isNightMode = mConfig.getBoolean(getString(R.string.key_is_night_mode), false);
+        if (isNightMode) {
             setTheme(R.style.DarkTheme);
         } else {
             setTheme(R.style.LightTheme);
@@ -58,21 +58,19 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
 
         Intent intent = getIntent();
-<<<<<<< HEAD
-        mFragment = (SettingFragment)getFragmentManager().findFragmentById(R.id.setting_fragment);
-        if ( intent.getStringExtra("data") != null ) {
+        mFragment = (SettingFragment) getFragmentManager().findFragmentById(R.id.setting_fragment);
+        if (intent.getStringExtra("data") != null) {
             Bundle bundle = new Bundle();
             bundle.putString("data", intent.getStringExtra("data"));
             mFragment.setArguments(bundle);
-=======
-        mFragment = (SettingFragment)getSupportFragmentManager().findFragmentById(R.id.setting_fragment);
-        if ( intent.getStringExtra( getString( R.string.key_title ) ) != null ) {
-            mFragment.setArguments(intent.getExtras());
->>>>>>> 3886abf48bac6dca505b3c143744163d5f457c01
-        }
+            mFragment = (SettingFragment) getFragmentManager().findFragmentById(R.id.setting_fragment);
+            if (intent.getStringExtra(getString(R.string.key_title)) != null) {
+                mFragment.setArguments(intent.getExtras());
+            }
 
-        initToolbar();
-        mRealm = Realm.getDefaultInstance(); // Initialize Realm
+            initToolbar();
+            mRealm = Realm.getDefaultInstance(); // Initialize Realm
+        }
     }
 
     @Override

@@ -31,6 +31,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -48,10 +49,7 @@ import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-<<<<<<< HEAD
-=======
 import java.util.Date;
->>>>>>> 3886abf48bac6dca505b3c143744163d5f457c01
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.MainActivity;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers.AlarmReceiver;
@@ -91,12 +89,12 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     private Calendar mSchedule;
 
     private GoogleApiClient mClient;
+    private LocationRequest mRequest;
 
-<<<<<<< HEAD
-    public SettingFragment() {}
-=======
+    public SettingFragment() {
+    }
+
     private static final int GEOFENCE_CIRCLE_RADIUS = 500;
->>>>>>> 3886abf48bac6dca505b3c143744163d5f457c01
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -107,6 +105,8 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         super.onCreate(savedInstanceState);
         mSchedule = Calendar.getInstance();
         mClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
 
@@ -114,18 +114,18 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         if (getArguments() != null) {
             isEditing = true;
             mData = new AlarmRealmData(
-                    getArguments().getString( getString(R.string.key_title)),
-                    getArguments().getString( getString(R.string.key_content)),
-                    getArguments().getString( getString(R.string.key_created_data))
+                    getArguments().getString(getString(R.string.key_title)),
+                    getArguments().getString(getString(R.string.key_content)),
+                    getArguments().getString(getString(R.string.key_created_data))
             );
-            mData.setLocation( getArguments().getBoolean( getString(R.string.key_is_location) ) );
+            mData.setLocation(getArguments().getBoolean(getString(R.string.key_is_location)));
             if (mData.isLocation()) {
-                mTargetLocation = new LatLng( getArguments().getDouble( getString(R.string.key_latitude) ), getArguments().getDouble( getString(R.string.key_longitude) ) );
+                mTargetLocation = new LatLng(getArguments().getDouble(getString(R.string.key_latitude)), getArguments().getDouble(getString(R.string.key_longitude)));
             }
-            long data = getArguments().getLong( getString(R.string.key_data) );
+            long data = getArguments().getLong(getString(R.string.key_data));
             if (data != 0) {
-                mData.setDate( new Date(data) );
-                mSchedule.setTime( mData.getDate() );
+                mData.setDate(new Date(data));
+                mSchedule.setTime(mData.getDate());
             }
 
 //            Gson gson = new Gson();
@@ -144,8 +144,8 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         Log.d("config", "onCreateView");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false);
         if (mData != null) {
-            mBinding.etTitle.setText( mData.getTitle() );
-            mBinding.etContext.setText( mData.getContent() );
+            mBinding.etTitle.setText(mData.getTitle());
+            mBinding.etContext.setText(mData.getContent());
         }
         return mBinding.getRoot();
     }
@@ -167,6 +167,23 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+
+        mRequest = LocationRequest.create();
+        //TODO: 変数
+        mRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+                .setFastestInterval(1000)
+                .setInterval(3000);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mClient, mRequest, this);
 
     }
 
@@ -208,6 +225,15 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
                 makeMarker(null);
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (mClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mClient, this);
+        }
     }
 
     private void makeMarker(String name) {
@@ -324,10 +350,16 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
             } else if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 23) {
                 manager.setExact(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
             } else {
-                manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
+                setExactAndAllowWhileIdle(manager);
             }
 
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void setExactAndAllowWhileIdle(AlarmManager manager) {
+        manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
+
     }
 
     // Setting Geofence
