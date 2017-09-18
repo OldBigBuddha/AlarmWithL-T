@@ -16,15 +16,22 @@ public class SeniorActivity extends AppCompatActivity {
 
     private ActivitySeniorBinding mBinding;
 
+    private String[] mQuestions;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_senior);
+        if (getIntent().getExtras() != null) {
+            mQuestions = getIntent().getExtras().getStringArray( getString(R.string.key_questions) );
+        } else {
+            mQuestions = new String[] {"お年寄りモードを使いますか？"};
+        }
 
         YesNoFragment fragment = new YesNoFragment();
         Bundle args = new Bundle();
-        args.putStringArray( getString(R.string.key_questions), new String[] {"お年寄りモードを使いますか？"} );
+        args.putStringArray( getString(R.string.key_questions), mQuestions );
         fragment.setArguments(args);
         fragment.setOnSelectedAnswerListener(new YesNoFragment.OnSelectedAnswerListener() {
             @Override

@@ -21,17 +21,24 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences mConfig;
 
+    private static final String[] QUESTIONS = new String[] {
+            "お年寄りモードを使いますか？"
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
         SharedPreferences.Editor editor = mConfig.edit();
 
-        Log.d("hoge", "fuga");
         if (!(mConfig.getBoolean( getString(R.string.key_is_senior_mode), false ))) {
             editor.putBoolean( getString(R.string.key_is_senior_mode), true );
             editor.commit();
 
+            Intent intent = new Intent( this, SeniorActivity.class );
+            Bundle args   = new Bundle();
+            args.putStringArray(getString(R.string.key_questions), QUESTIONS);
+            intent.putExtras(args);
             startActivity(new Intent(this, SeniorActivity.class));
         }
 

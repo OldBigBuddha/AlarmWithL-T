@@ -53,6 +53,7 @@ public class ConfigurationFragment extends PreferenceFragment {
                         mEditor.putBoolean( getString(R.string.key_is_senior_mode), isChecked );
                         mEditor.commit();
                         Log.d("OnChangeSenior", "isChecked = " + isChecked);
+                        Intent intent = new Intent(getActivity(), SeniorActivity.class);
 
                         getActivity().finish();
                         getActivity().startActivity(new Intent(getActivity(), SeniorActivity.class));

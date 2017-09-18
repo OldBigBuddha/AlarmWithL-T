@@ -38,7 +38,8 @@
         <receiver android:name=".Receivers.AlarmReceiver" />
 
         <activity android:name=".SettingActivity" />
-        <activity android:name=".SeniorActivity"></activity>
+        <activity android:name=".SeniorActivity" />
+        <activity android:name=".MainSeniorActivity"></activity>
     </application>
 
 </manifest>
