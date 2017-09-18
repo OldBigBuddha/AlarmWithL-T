@@ -21,7 +21,8 @@ public class YesNoFragment extends Fragment {
     private FragmentYesNoBinding mBinding;
 
     public interface OnSelectedAnswerListener {
-        void onSelectedYes();
+        // TODO 列挙型管理
+        void onSelectedYes(boolean isFirst);
         void onSelectedNo();
     }
     private OnSelectedAnswerListener mListener;
@@ -46,7 +47,7 @@ public class YesNoFragment extends Fragment {
         mBinding.btYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onSelectedYes();
+                mListener.onSelectedYes( getArguments().getBoolean( getString(R.string.key_is_first), true ) );
             }
         });
 

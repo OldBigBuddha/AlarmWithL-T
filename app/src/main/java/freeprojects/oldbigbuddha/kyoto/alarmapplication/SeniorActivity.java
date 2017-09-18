@@ -30,12 +30,15 @@ public class SeniorActivity extends AppCompatActivity {
         }
 
         YesNoFragment fragment = new YesNoFragment();
-        Bundle args = new Bundle();
+        final Bundle args = new Bundle();
         args.putStringArray( getString(R.string.key_questions), mQuestions );
         fragment.setArguments(args);
         fragment.setOnSelectedAnswerListener(new YesNoFragment.OnSelectedAnswerListener() {
             @Override
-            public void onSelectedYes() {
+            public void onSelectedYes(boolean isFirst) {
+                if (isFirst) {
+                    startActivity(new Intent(SeniorActivity.this, MainSeniorActivity.class));
+                }
                 Toast.makeText(SeniorActivity.this, "Select Yes", Toast.LENGTH_SHORT).show();
             }
 

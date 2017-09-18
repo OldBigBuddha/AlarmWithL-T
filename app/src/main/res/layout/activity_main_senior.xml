@@ -14,6 +14,7 @@
         android:gravity="center"/>
 
     <Button
+        android:id="@+id/bt_start_senior"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

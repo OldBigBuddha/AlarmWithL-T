@@ -9,10 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityMainBinding;
@@ -38,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent( this, SeniorActivity.class );
             Bundle args   = new Bundle();
             args.putStringArray(getString(R.string.key_questions), QUESTIONS);
+            args.putBoolean( getString(R.string.key_is_first), true );
             intent.putExtras(args);
             startActivity(new Intent(this, SeniorActivity.class));
         }
