@@ -7,7 +7,7 @@
     <TextView
         android:id="@+id/tv_question"
         android:text=""
-        android:textSize="56sp"
+        android:textSize="48sp"
         android:textColor="#000"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -35,7 +35,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:text="いいえ"
-            android:textSize="48sp"
+            android:textSize="42sp"
             android:background="#3498db"/>
 
 

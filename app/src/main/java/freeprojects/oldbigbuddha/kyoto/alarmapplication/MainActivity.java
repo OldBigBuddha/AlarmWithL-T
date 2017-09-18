@@ -26,7 +26,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
 
-//        startActivity(new Intent(MainActivity.this, SeniorSettingActivity.class));
+        if (mConfig.getBoolean( getString(R.string.key_is_first_boot), true )) {
+            SharedPreferences.Editor editor = mConfig.edit();
+            editor.putBoolean( getString(R.string.key_is_first_boot), false );
+            editor.commit();
+
+            Intent intent = new Intent(this, SeniorSettingActivity.class);
+
+            intent.putExtra( getString(R.string.key_first_question), "お年寄りモードを使いますか？" );
+            startActivity(intent);
+        }
 
         // Check Night Mode
         boolean isNightMode = mConfig.getBoolean( getString(R.string.key_is_night_mode), false );

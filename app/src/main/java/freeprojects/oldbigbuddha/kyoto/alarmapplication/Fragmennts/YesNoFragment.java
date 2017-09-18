@@ -3,7 +3,8 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
+import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,20 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentYesN
  */
 public class YesNoFragment extends Fragment {
 
+    public interface OnClickButtonListener {
+        void onClickYes(View view);
+        void onClickNo(View view);
+    }
+
+    private OnClickButtonListener mListener;
+
+    public void setOnClickButtonListener(@NonNull OnClickButtonListener listener) {
+        mListener = listener;
+    }
+
     private FragmentYesNoBinding mBinding;
 
-    private static final String[] questions = new String[]{
+    private String[] mQuestions = new String[]{
             "今日ですか？",
             "今週ですか？",
             "今月ですか？",
@@ -41,16 +53,28 @@ public class YesNoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_yes_no, container, false);
-        mBinding.tvQuestion.setText(questions[pointer]);
+        mBinding.tvQuestion.setText(mQuestions[pointer]);
         mBinding.btYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("OnClick","OK");
-                pointer++;
-                if (pointer >= questions.length ) pointer = 0;
-                mBinding.tvQuestion.setText(questions[pointer]);
+                mListener.onClickYes(v);
+//                pointer++;
+//                if (pointer >= questions.length ) pointer = 0;
+//                mBinding.tvQuestion.setText(questions[pointer]);
+            }
+        });
+        mBinding.btNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onClickNo(v);
             }
         });
         return mBinding.getRoot();
     }
+
+    public void setQuestions(@NonNull String[] questions) {
+        mQuestions = questions;
+    }
+
 }

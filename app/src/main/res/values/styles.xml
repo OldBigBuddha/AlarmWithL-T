@@ -8,7 +8,7 @@
         <!--<item name="colorAccent">@color/colorAccent</item>-->
     </style>
 
-    <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="DarkTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:background">@color/darkBackground</item>
     </style>
     <style name="toolbar" parent="Widget.AppCompat.ActionBar">

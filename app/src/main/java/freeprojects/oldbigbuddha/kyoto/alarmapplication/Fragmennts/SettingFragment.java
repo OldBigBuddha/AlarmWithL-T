@@ -4,6 +4,8 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -45,13 +47,11 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.MainActivity;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers.AlarmReceiver;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.DateDialogFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.TimeDialogFragment;
@@ -94,7 +94,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     public SettingFragment() {
     }
 
-    private static final int GEOFENCE_CIRCLE_RADIUS = 500;
+    private static final int GEOFENCE_CIRCLE_RADIUS = 100;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -110,30 +110,30 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
                 .addApi(LocationServices.API)
                 .build();
 
-
-        if (getArguments() != null) {
-            isEditing = true;
-            mData = new AlarmRealmData(
-                    getArguments().getString(getString(R.string.key_title)),
-                    getArguments().getString(getString(R.string.key_content)),
-                    getArguments().getString(getString(R.string.key_created_data))
-            );
-            mData.setLocation(getArguments().getBoolean(getString(R.string.key_is_location)));
-            if (mData.isLocation()) {
-                mTargetLocation = new LatLng(getArguments().getDouble(getString(R.string.key_latitude)), getArguments().getDouble(getString(R.string.key_longitude)));
-            }
-            long data = getArguments().getLong(getString(R.string.key_data));
-            if (data != 0) {
-                mData.setDate(new Date(data));
-                mSchedule.setTime(mData.getDate());
-            }
-
-//            Gson gson = new Gson();
-//            mData = gson.fromJson(getArguments().getString("data"), AlarmRealmData.class);
-//            mSchedule.setTime(mData.getDate());
-        } else {
-            mData = null;
-        }
+        mData = null;
+//        if (getArguments() != null) {
+//            isEditing = true;
+//            mData = new AlarmRealmData(
+//                    getArguments().getString(getString(R.string.key_title)),
+//                    getArguments().getString(getString(R.string.key_content)),
+//                    getArguments().getString(getString(R.string.key_created_data))
+//            );
+//            mData.setLocation(getArguments().getBoolean(getString(R.string.key_is_location)));
+//            if (mData.isLocation()) {
+//                mTargetLocation = new LatLng(getArguments().getDouble(getString(R.string.key_latitude)), getArguments().getDouble(getString(R.string.key_longitude)));
+//            }
+//            long data = getArguments().getLong(getString(R.string.key_data));
+//            if (data != 0) {
+//                mData.setDate(new Date(data));
+//                mSchedule.setTime(mData.getDate());
+//            }
+//
+////            Gson gson = new Gson();
+////            mData = gson.fromJson(getArguments().getString("data"), AlarmRealmData.class);
+////            mSchedule.setTime(mData.getDate());
+//        } else {
+//            mData = null;
+//        }
 
     }
 
@@ -143,10 +143,6 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         // Inflate the layout for this fragment
         Log.d("config", "onCreateView");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false);
-        if (mData != null) {
-            mBinding.etTitle.setText(mData.getTitle());
-            mBinding.etContext.setText(mData.getContent());
-        }
         return mBinding.getRoot();
     }
 
@@ -269,12 +265,18 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
     // Initialize Google Map
     private void initMap() {
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        autocompleteFragment.setOnPlaceSelectedListener(this);
 
-        CustomMapFragment mapFragment = (CustomMapFragment) getActivity().getFragmentManager().findFragmentById(R.id.google_map_fragment);
+        PlaceAutocompleteFragment autocompleteFragment = new PlaceAutocompleteFragment();
+        CustomMapFragment         mapFragment          = new CustomMapFragment();
+        autocompleteFragment.setOnPlaceSelectedListener(this);
         mapFragment.setParent(mBinding.scroll);
         mapFragment.getMapAsync(this);
+
+        FragmentManager     manager     = getActivity().getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.place_autocomplete_fragment, autocompleteFragment);
+        transaction.add(R.id.google_map_fragment, mapFragment);
+        transaction.commit();
 
         mMarkerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         mCircleOptions = new CircleOptions().fillColor(Color.argb(97, 93, 185, 139)).strokeColor(Color.argb(200, 93, 185, 139));
@@ -284,7 +286,10 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     // Pass AlarmData to Activity
     public AlarmRealmData getAlarmData() {
         Log.d(TAG, "isData=" + isDate + ",isLocation=" + isLocation);
-        if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) { //Checking empty
+        Log.d("Title", mBinding.etTitle.getText().toString());
+        Log.d("Context", mBinding.etContext.getText().toString());
+        if ( ( TextUtils.isEmpty(mBinding.etTitle.getText().toString()) &&
+                TextUtils.isEmpty(mBinding.etContext.getText().toString()) ) ) { //Checking empty
 
             if (!isEditing) {
                 try {
@@ -310,6 +315,9 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
             Snackbar snackbar = Snackbar.make(mBinding.parent, getString(R.string.message_error_null_context), Snackbar.LENGTH_SHORT);
             snackbar.show();
         }
+        Log.d("hoge", "fuga");
+
+        new NullPointerException("NPE");
 
         return null;
     }

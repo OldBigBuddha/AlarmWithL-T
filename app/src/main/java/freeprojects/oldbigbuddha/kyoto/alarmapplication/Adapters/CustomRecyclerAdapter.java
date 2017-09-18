@@ -29,7 +29,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
- * Created by lifeistech on 2017/08/02.
+ * Created by BigBuddha on 2017/08/02.
  */
 
 public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder>{

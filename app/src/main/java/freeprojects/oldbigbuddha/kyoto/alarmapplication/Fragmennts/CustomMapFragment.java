@@ -21,6 +21,10 @@ public class CustomMapFragment extends MapFragment {
 
     public CustomMapFragment() {}
 
+    public static CustomMapFragment newInstance() {
+        return new CustomMapFragment();
+    }
+
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         View layout = super.onCreateView(layoutInflater, viewGroup, bundle);

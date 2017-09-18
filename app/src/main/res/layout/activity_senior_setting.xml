@@ -8,6 +8,6 @@
        android:id="@+id/senior_fragment"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       class="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.YesNoFragment"/>
+       android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.YesNoFragment"/>
 </LinearLayout>
 </layout>

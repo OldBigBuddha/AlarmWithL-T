@@ -2,12 +2,11 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
 
 import android.Manifest;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -24,9 +22,6 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.SettingFragme
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
 import io.realm.Realm;
-
-import static android.support.design.R.color.background_material_dark;
-import static android.support.design.R.color.primary_dark_material_dark;
 
 public class FormActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 
@@ -56,26 +51,23 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
         checkPermission();
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
+        initToolbar();
 
-        Intent intent = getIntent();
-        mFragment = (SettingFragment) getFragmentManager().findFragmentById(R.id.setting_fragment);
-        if (intent.getStringExtra("data") != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString("data", intent.getStringExtra("data"));
-            mFragment.setArguments(bundle);
-            mFragment = (SettingFragment) getFragmentManager().findFragmentById(R.id.setting_fragment);
-            if (intent.getStringExtra(getString(R.string.key_title)) != null) {
-                mFragment.setArguments(intent.getExtras());
-            }
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        mFragment = SettingFragment.newInstance();
+        transaction.add(R.id.setting_fragment, mFragment);
+        transaction.commit();
 
-            initToolbar();
-            mRealm = Realm.getDefaultInstance(); // Initialize Realm
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        return super.onContextItemSelected(item);
+        mRealm = Realm.getDefaultInstance(); // Initialize Realm
+//        Intent intent = getIntent();
+//       if (intent.getStringExtra("data") != null) {
+//            Bundle bundle = new Bundle();
+//            bundle.putString("data", intent.getStringExtra("data"));
+//            mFragment.setArguments(bundle);
+//            if (intent.getStringExtra(getString(R.string.key_title)) != null) {
+//                mFragment.setArguments(intent.getExtras());
+//            }
+//        }
     }
 
     @Override
@@ -92,15 +84,20 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
                 Log.d(TAG, "Selected Create");
                 // Get AlarmData from SettingFragment
                 AlarmRealmData data = mFragment.getAlarmData();
+                if (data == null) {
+                    Log.d("Null", "NPE");
+                    new NullPointerException("User's data is null");
+                } else {
 
-                // Save AlarmData
-                mRealm.beginTransaction();
-                mRealm.copyToRealm(data);
-                mRealm.commitTransaction();
+                    // Save AlarmData
+                    mRealm.beginTransaction();
+                    mRealm.copyToRealm(data);
+                    mRealm.commitTransaction();
 
-                // Back home
-                onBackPressed();
-                break;
+                    // Back home
+                    onBackPressed();
+                    break;
+                }
             }
             default: {
                 Log.d(TAG, "Selected Other Item");
@@ -137,6 +134,7 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
 
     // Initialize ToolBar
     private void initToolbar() {
+        Log.d("Toolbar", "init");
         Toolbar toolBar = mBinding.toolbarCreate;
         if (toolBar != null) {
             setSupportActionBar(toolBar);
