@@ -290,10 +290,10 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     // Pass AlarmData to Activity
     public AlarmRealmData getAlarmData() {
         Log.d(TAG, "isData=" + isDate + ",isLocation=" + isLocation);
-        Log.d("Title", mBinding.etTitle.getText().toString());
-        Log.d("Context", mBinding.etContext.getText().toString());
-        if ( !( TextUtils.isEmpty(mBinding.etTitle.getText().toString()) &&
-                TextUtils.isEmpty(mBinding.etContext.getText().toString()) ) ) { //Checking empty
+        Log.d("Title", title.get());
+        Log.d("Context", content.get());
+        if ( !( TextUtils.isEmpty(title.get()) &&
+                TextUtils.isEmpty(content.get()) ) ) { //Checking empty
 
             if (!isEditing) {
                 try {
