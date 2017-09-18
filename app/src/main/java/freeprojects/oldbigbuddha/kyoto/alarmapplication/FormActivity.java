@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,17 +14,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.SettingFragment;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.SettingFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
 import io.realm.Realm;
-
-import static android.support.design.R.color.background_material_dark;
-import static android.support.design.R.color.primary_dark_material_dark;
 
 public class FormActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 

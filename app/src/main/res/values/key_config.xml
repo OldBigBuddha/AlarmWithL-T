@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="config">config</string>
+    <string name="config_fragment_title">Configration</string>
+    <string name="config_fragment_night_mode_title">Night Mode</string>
+    <string name="config_fragment_night_mode_summary">Night Mode set On/Off</string>
+    <string name="config_fragment_senior_mode_title">Senior Mode</string>
+    <string name="config_fragment_senior_mode_summary">For senior</string>
+</resources>

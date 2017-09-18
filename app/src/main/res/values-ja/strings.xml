@@ -20,7 +20,6 @@
     <string name="month">月</string>
     <string name="year">年</string>
     <string name="set">決定</string>
-    <string name="key_is_night_mode"></string>
     <string name="config_fragment_night_mode_title">ナイトモード</string>
     <string name="config_fragment_senior_mode_title">お年寄りモード</string>
     <string name="no_permission">許可がもらえませんでした\nその為、アラームを作ることができません</string>

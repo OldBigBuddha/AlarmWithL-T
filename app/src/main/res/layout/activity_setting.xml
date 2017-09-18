@@ -18,6 +18,6 @@
         android:id="@+id/config_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.ConfigurationFragment" />
+        android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.ConfigurationFragment" />
 </LinearLayout>
 </layout>

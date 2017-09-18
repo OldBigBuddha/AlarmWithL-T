@@ -11,16 +11,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.View;
-
-import com.google.gson.Gson;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Adapters.CustomRecyclerAdapter;
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs.ShowDateDialogFragment;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.Dialogs.ShowDateDialogFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Receivers.AlarmReceiver;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityShowDataBinding;

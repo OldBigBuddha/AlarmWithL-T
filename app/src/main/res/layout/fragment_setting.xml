@@ -101,7 +101,7 @@
 
                         <fragment
                             android:id="@+id/google_map_fragment"
-                            android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.CustomMapFragment"
+                            android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.CustomMapFragment"
                             android:layout_width="match_parent"
                             android:layout_height="200dp" />
                     </LinearLayout>

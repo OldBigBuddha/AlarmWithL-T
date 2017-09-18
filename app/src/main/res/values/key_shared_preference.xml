@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="key_title">title</string>
+    <string name="key_content">content</string>
+    <string name="key_created_data">createdData</string>
+    <string name="key_alarm_data">alarmData</string>
+    <string name="key_is_location">isLocation</string>
+    <string name="key_latitude">latitude</string>
+    <string name="key_longitude">longitude</string>
+    <string name="key_data">data</string>
+    <string name="key_config">config</string>
+    <string name="key_is_night_mode">nightmode</string>
+    <string name="key_is_senior_mode">senior</string>
+    <string name="key_is_first_boot">firstboot</string>
+
+</resources>

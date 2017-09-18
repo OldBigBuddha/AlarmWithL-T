@@ -25,6 +25,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
+        SharedPreferences.Editor editor = mConfig.edit();
+
+        Log.d("hoge", "fuga");
+        if (!(mConfig.getBoolean( getString(R.string.key_is_senior_mode), false ))) {
+            editor.putBoolean( getString(R.string.key_is_senior_mode), true );
+            editor.commit();
+
+            startActivity(new Intent(this, SeniorActivity.class));
+        }
 
         // Check Night Mode
         boolean isNightMode = mConfig.getBoolean( getString(R.string.key_is_night_mode), false );
