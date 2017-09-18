@@ -4,6 +4,8 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +33,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -88,8 +91,9 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     private Calendar mSchedule;
 
     private GoogleApiClient mClient;
+    private LocationRequest mRequest;
 
-    private static final int GEOFENCE_CIRCLE_RADIUS = 500;
+    private static final int GEOFENCE_CIRCLE_RADIUS = 100;
 
     public SettingFragment() {
         // Required empty public constructor
@@ -121,9 +125,6 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
                 mSchedule.setTime( mData.getDate() );
             }
 
-//            Gson gson = new Gson();
-//            mData = gson.fromJson(getArguments().getString("data"), AlarmRealmData.class);
-//            mSchedule.setTime(mData.getDate());
         } else {
             mData = null;
         }
@@ -160,6 +161,22 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        mRequest = LocationRequest.create();
+        //TODO: 変数
+        mRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+                .setFastestInterval(1000)
+                .setInterval(3000);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mClient, mRequest, this);
 
     }
 
@@ -236,12 +253,19 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
     // Initialize Google Map
     private void initMap() {
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        autocompleteFragment.setOnPlaceSelectedListener(this);
 
-        CustomMapFragment mapFragment = (CustomMapFragment) getActivity().getFragmentManager().findFragmentById(R.id.google_map_fragment);
+
+        PlaceAutocompleteFragment autocompleteFragment = new PlaceAutocompleteFragment();
+        CustomMapFragment         mapFragment          = new CustomMapFragment();
+        autocompleteFragment.setOnPlaceSelectedListener(this);
         mapFragment.setParent(mBinding.scroll);
         mapFragment.getMapAsync(this);
+
+        FragmentManager manager     = getActivity().getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.place_autocomplete_fragment, autocompleteFragment);
+        transaction.add(R.id.google_map_fragment, mapFragment);
+        transaction.commit();
 
         mMarkerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         mCircleOptions = new CircleOptions().fillColor(Color.argb(97, 93, 185, 139)).strokeColor(Color.argb(200, 93, 185, 139));
@@ -317,10 +341,15 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
             } else if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 23) {
                 manager.setExact(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
             } else {
-                manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
+                setExactAndAllowWhileIdle(manager);
             }
 
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void setExactAndAllowWhileIdle(AlarmManager manager) {
+        manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mSchedule.getTimeInMillis(), settingAlarm(mData));
     }
 
     // Setting Geofence
@@ -329,7 +358,8 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
                 .setRequestId(data.getGeofenceId())
                 .setCircularRegion(mTargetLocation.latitude, mTargetLocation.longitude, GEOFENCE_CIRCLE_RADIUS)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER|Geofence.GEOFENCE_TRANSITION_DWELL)
+                .setLoiteringDelay(3000)
                 .build();
 
         GeofencingRequest request = new GeofencingRequest.Builder()
