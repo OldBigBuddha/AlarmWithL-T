@@ -1,6 +1,5 @@
 package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -9,9 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.YesNoFragment;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.YesNoFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivitySeniorSettingBinding;
 
 public class SeniorSettingActivity extends AppCompatActivity {

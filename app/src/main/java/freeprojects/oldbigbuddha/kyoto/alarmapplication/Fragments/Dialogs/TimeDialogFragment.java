@@ -1,4 +1,4 @@
-package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs;
+package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

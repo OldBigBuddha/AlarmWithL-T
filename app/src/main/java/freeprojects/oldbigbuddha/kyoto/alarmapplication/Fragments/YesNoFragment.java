@@ -1,4 +1,4 @@
-package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts;
+package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments;
 
 
 import android.databinding.DataBindingUtil;

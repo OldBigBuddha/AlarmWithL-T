@@ -1,6 +1,13 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="fragment"
+            type="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.SettingFragment" />
+    </data>
+
     <LinearLayout
         android:id="@+id/parent"
         android:layout_width="match_parent"
@@ -19,6 +26,7 @@
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:text="@={fragment.title}"
                 android:hint="@string/title"
                 android:maxLines="1"/>
         </android.support.design.widget.TextInputLayout>
@@ -34,6 +42,7 @@
                 android:id="@+id/etContext"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:text="@={fragment.content}"
                 android:hint="@string/content"
                 android:maxLines="1"/>
         </android.support.design.widget.TextInputLayout>
@@ -101,7 +110,7 @@
 
                         <fragment
                             android:id="@+id/google_map_fragment"
-                            android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.CustomMapFragment"
+                            android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.CustomMapFragment"
                             android:layout_width="match_parent"
                             android:layout_height="200dp" />
                     </LinearLayout>

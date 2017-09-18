@@ -18,7 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.SettingFragment;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.SettingFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
 import io.realm.Realm;

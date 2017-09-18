@@ -1,27 +1,17 @@
-package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.Dialogs;
+package freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.view.LayoutInflaterCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
-
 import java.text.SimpleDateFormat;
 
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragmennts.CustomMapFragment;
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.ShowDataActivity;
 
 /**
  * Created by BigBuddha on 2017/08/30.
