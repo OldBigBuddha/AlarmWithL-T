@@ -11,6 +11,7 @@
         android:layout_weight="1"
         android:text="レイト"
         android:textSize="72sp"
+        android:textColor="#000"
         android:gravity="center"/>
 
     <Button

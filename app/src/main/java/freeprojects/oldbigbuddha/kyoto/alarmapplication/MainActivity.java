@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mConfig;
 
     private static final String[] QUESTIONS = new String[] {
+            "はい",
+            "いいえ",
             "お年寄りモードを使いますか？"
     };
 

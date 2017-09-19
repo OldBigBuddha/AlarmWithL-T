@@ -7,8 +7,6 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentYesNoBinding;
@@ -20,19 +18,23 @@ public class YesNoFragment extends Fragment {
 
     private FragmentYesNoBinding mBinding;
 
+    private String[] mQuestions;
+    private String[] mAnswers = new String[]{
+            "はい",
+            "いいえ",
+    };
+
+    private int answerCount = 0;
+
+    private OnSelectedAnswerListener mListener;
     public interface OnSelectedAnswerListener {
         // TODO 列挙型管理
         void onSelectedYes(boolean isFirst);
         void onSelectedNo();
     }
-    private OnSelectedAnswerListener mListener;
-
     public void setOnSelectedAnswerListener(OnSelectedAnswerListener listener) {
         mListener = listener;
     }
-
-
-    private String[] questions;
 
     public YesNoFragment() {
         // Required empty public constructor
@@ -47,7 +49,7 @@ public class YesNoFragment extends Fragment {
         mBinding.btYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onSelectedYes( getArguments().getBoolean( getString(R.string.key_is_first), true ) );
+                mListener.onSelectedYes( getArguments().getBoolean( getString(R.string.key_is_senior_mode), true ) );
             }
         });
 
@@ -58,12 +60,16 @@ public class YesNoFragment extends Fragment {
             }
         });
         Bundle args = getArguments();
-        if (args == null) {
-            new NullPointerException("args is null object");
-        } else {
-            questions = getArguments().getStringArray(getString(R.string.key_questions));
-            mBinding.tvQuestion.setText(questions[0]);
+        mQuestions = args.getStringArray(getString(R.string.key_questions));
+        if (args.getStringArray( getString(R.string.key_answers) ) != null) {
+            mAnswers = args.getStringArray( getString(R.string.key_answers) );
         }
+
+        mBinding.btYes.setText( mAnswers[0] );
+        mBinding.btNo.setText(  mAnswers[1] );
+        mBinding.tvQuestion.setText(mQuestions[answerCount]);
+        answerCount++;
+
         return mBinding.getRoot();
     }
 

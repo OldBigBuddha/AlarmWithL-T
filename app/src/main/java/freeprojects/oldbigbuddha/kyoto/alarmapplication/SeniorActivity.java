@@ -3,7 +3,7 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.provider.ContactsContract;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,14 +23,16 @@ public class SeniorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_senior);
-        if (getIntent().getExtras() != null) {
-            mQuestions = getIntent().getExtras().getStringArray( getString(R.string.key_questions) );
-        } else {
-            mQuestions = new String[] {"お年寄りモードを使いますか？"};
+        Bundle bundle = getIntent().getExtras();
+        mQuestions = bundle.getStringArray( getString(R.string.key_questions) );
+        String[] answers = null;
+        if (bundle.getStringArray( getString(R.string.key_answers) ) != null) {
+            answers = bundle.getStringArray( getString(R.string.key_answers) );
         }
 
         YesNoFragment fragment = new YesNoFragment();
         final Bundle args = new Bundle();
+        args.putStringArray( getString(R.string.key_answers), answers);
         args.putStringArray( getString(R.string.key_questions), mQuestions );
         fragment.setArguments(args);
         fragment.setOnSelectedAnswerListener(new YesNoFragment.OnSelectedAnswerListener() {
