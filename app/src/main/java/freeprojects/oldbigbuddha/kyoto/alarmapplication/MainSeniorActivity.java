@@ -7,20 +7,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityMainSeniorBinding;
 
 public class MainSeniorActivity extends AppCompatActivity {
 
     private ActivityMainSeniorBinding mBinding;
 
-    private static final String[] QUESTIONS = new String[] {
-            "何で教えてほしいですか？"
-    };
-    private static final String[] ANSWERS   = new String[] {
-            "場所",
-            "時間",
-            "何で教えてほしいですか？",
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +24,21 @@ public class MainSeniorActivity extends AppCompatActivity {
         mBinding.btStartSenior.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "スタート", Toast.LENGTH_SHORT).show();
+
+                ArrayList<String> questions = new ArrayList<>(),
+                                  answers   = new ArrayList<>();
+                questions.add("何を使ってお知らせしましょうか？");
+
+                answers.add("時間");
+                answers.add("場所");
+
                 Intent intent = new Intent(MainSeniorActivity.this, SeniorActivity.class);
                 Bundle args = new Bundle();
-//                args.putStringArray( "answer", ANSWERS);
-                args.putStringArray( getString(R.string.key_questions), QUESTIONS);
+
+                args.putStringArrayList( getString(R.string.key_questions), questions);
+                args.putStringArrayList( getString(R.string.key_answers)  , answers);
                 intent.putExtras(args);
+
                 startActivity(intent);
             }
         });

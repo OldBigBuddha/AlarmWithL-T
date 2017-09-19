@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.IdRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,17 +15,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences mConfig;
 
-    private static final String[] QUESTIONS = new String[] {
-            "はい",
-            "いいえ",
-            "お年寄りモードを使いますか？"
-    };
+    private ArrayList<String> mQuestions;
+    
+    private ActivityMainBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +38,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean( getString(R.string.key_is_senior_mode), true );
             editor.commit();
 
-            Intent intent = new Intent( this, SeniorActivity.class );
-            Bundle args   = new Bundle();
-            args.putStringArray(getString(R.string.key_questions), QUESTIONS);
-            args.putBoolean( getString(R.string.key_is_first), true );
-            intent.putExtras(args);
-            startActivity(new Intent(this, SeniorActivity.class));
+            goSenior();
         }
 
         // Check Night Mode
@@ -51,22 +49,38 @@ public class MainActivity extends AppCompatActivity {
             setTheme(R.style.LightTheme);
         }
 
-        ActivityMainBinding binding = DataBindingUtil.setContentView( this, R.layout.activity_main );
-        binding.setViewModel( new MainViewModel() );
-        binding.setTitle( getString( R.string.title_home ) );
-        setSupportActionBar(binding.toolbarMain);
+        mBinding = DataBindingUtil.setContentView( this, R.layout.activity_main );
+        mBinding.setViewModel( new MainViewModel() );
+        mBinding.setTitle( getString( R.string.title_home ) );
+        setSupportActionBar(mBinding.toolbarMain);
 
         if (isNightMode) {
-            binding.btNew.setBackground( getDrawable(R.drawable.shape_rouded_corners_30dp_dark) );
-            binding.btEdit.setBackground( getDrawable(R.drawable.shape_rouded_corners_30dp_dark) );
+            setButtonTheme( getDrawable(R.drawable.shape_rouded_corners_30dp_dark) );
+            setButtonTheme( getDrawable(R.drawable.shape_rouded_corners_30dp_dark) );
         } else {
-            binding.btNew.setBackground( getDrawable(R.drawable.shape_rouded_corners_30dp_light) );
-            binding.btEdit.setBackground( getDrawable(R.drawable.shape_rouded_corners_30dp_light) );
+            setButtonTheme( getDrawable(R.drawable.shape_rouded_corners_30dp_light) );
+            setButtonTheme( getDrawable(R.drawable.shape_rouded_corners_30dp_light) );
         }
 
         if (!getIntent().getBooleanExtra("isPermit", true)) {
-            Snackbar.make( binding.linearMain, getString( R.string.no_permission ), Snackbar.LENGTH_SHORT ).show();
+            Snackbar.make( mBinding.linearMain, getString( R.string.no_permission ), Snackbar.LENGTH_SHORT ).show();
         }
+    }
+
+    private void setButtonTheme(Drawable theme) {
+        mBinding.btNew.setBackground(theme);
+        mBinding.btEdit.setBackground(theme);
+    }
+
+    private void goSenior() {
+        mQuestions = new ArrayList<>();
+        mQuestions.add("お年寄りモードを使いますか？");
+
+        Intent intent = new Intent( this, SeniorActivity.class );
+        Bundle args   = new Bundle();
+        args.putStringArrayList(getString(R.string.key_questions), mQuestions);
+        intent.putExtras(args);
+        startActivity(intent);
     }
 
     @Override

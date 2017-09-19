@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.Senior.YesNoFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivitySeniorBinding;
 
@@ -16,24 +18,30 @@ public class SeniorActivity extends AppCompatActivity {
 
     private ActivitySeniorBinding mBinding;
 
-    private String[] mQuestions;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_senior);
-        Bundle bundle = getIntent().getExtras();
-        mQuestions = bundle.getStringArray( getString(R.string.key_questions) );
-        String[] answers = null;
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        ArrayList<String>
+                answers   = null,
+                questions;
+
+        questions = bundle.getStringArrayList( getString(R.string.key_questions) );
+
         if (bundle.getStringArray( getString(R.string.key_answers) ) != null) {
-            answers = bundle.getStringArray( getString(R.string.key_answers) );
+            answers = bundle.getStringArrayList( getString(R.string.key_answers) );
+        } else {
+            answers.add("はい");
+            answers.add("いいえ");
         }
 
         YesNoFragment fragment = new YesNoFragment();
         final Bundle args = new Bundle();
-        args.putStringArray( getString(R.string.key_answers), answers);
-        args.putStringArray( getString(R.string.key_questions), mQuestions );
+        args.putStringArrayList( getString(R.string.key_answers), answers);
+        args.putStringArrayList( getString(R.string.key_questions), questions);
         fragment.setArguments(args);
         fragment.setOnSelectedAnswerListener(new YesNoFragment.OnSelectedAnswerListener() {
             @Override
@@ -41,11 +49,12 @@ public class SeniorActivity extends AppCompatActivity {
                 if (isFirst) {
                     startActivity(new Intent(SeniorActivity.this, MainSeniorActivity.class));
                 }
-                Toast.makeText(SeniorActivity.this, "Select Yes", Toast.LENGTH_SHORT).show();
+                Log.d("YesNoFragment", "Yes");
             }
 
             @Override
             public void onSelectedNo() {
+                Log.d("YesNoFragment", "No");
                 startActivity(new Intent(SeniorActivity.this, MainActivity.class));
             }
         });

@@ -9,6 +9,8 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.SeniorActivity;
 
@@ -53,10 +55,8 @@ public class ConfigurationFragment extends PreferenceFragment {
                         mEditor.putBoolean( getString(R.string.key_is_senior_mode), isChecked );
                         mEditor.commit();
                         Log.d("OnChangeSenior", "isChecked = " + isChecked);
-                        Intent intent = new Intent(getActivity(), SeniorActivity.class);
+                        goSenior();
 
-                        getActivity().finish();
-                        getActivity().startActivity(new Intent(getActivity(), SeniorActivity.class));
                         return true;
                     }
                 });
@@ -69,6 +69,17 @@ public class ConfigurationFragment extends PreferenceFragment {
                         return true;
                     }
                 });
+    }
 
+    private void goSenior() {
+        ArrayList<String> questions = new ArrayList<>();
+        questions.add("お年寄りモードを使いますか？");
+
+        Intent intent = new Intent( getActivity(), SeniorActivity.class );
+        Bundle args   = new Bundle();
+        args.putStringArrayList(getString(R.string.key_questions), questions);
+        intent.putExtras(args);
+        getActivity().startActivity(intent);
+        getActivity().finish();
     }
 }

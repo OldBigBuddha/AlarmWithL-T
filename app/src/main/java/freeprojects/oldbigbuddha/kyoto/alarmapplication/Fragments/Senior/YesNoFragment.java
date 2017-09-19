@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentYesNoBinding;
 
@@ -18,11 +20,8 @@ public class YesNoFragment extends Fragment {
 
     private FragmentYesNoBinding mBinding;
 
-    private String[] mQuestions;
-    private String[] mAnswers = new String[]{
-            "はい",
-            "いいえ",
-    };
+    private ArrayList<String> mAnswers   = new ArrayList<>(),
+                              mQuestions = new ArrayList<>();
 
     private int answerCount = 0;
 
@@ -46,28 +45,32 @@ public class YesNoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_yes_no, container, false);
+
         mBinding.btYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onSelectedYes( getArguments().getBoolean( getString(R.string.key_is_senior_mode), true ) );
             }
         });
-
         mBinding.btNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onSelectedNo();
             }
         });
+
         Bundle args = getArguments();
-        mQuestions = args.getStringArray(getString(R.string.key_questions));
+        mQuestions = args.getStringArrayList(getString(R.string.key_questions));
         if (args.getStringArray( getString(R.string.key_answers) ) != null) {
-            mAnswers = args.getStringArray( getString(R.string.key_answers) );
+            mAnswers = args.getStringArrayList( getString(R.string.key_answers) );
+        } else {
+            mAnswers.add("はい");
+            mAnswers.add("いいえ");
         }
 
-        mBinding.btYes.setText( mAnswers[0] );
-        mBinding.btNo.setText(  mAnswers[1] );
-        mBinding.tvQuestion.setText(mQuestions[answerCount]);
+        mBinding.btYes.setText( mAnswers.get(0) );
+        mBinding.btNo.setText(  mAnswers.get(1) );
+        mBinding.tvQuestion.setText(mQuestions.get( answerCount ));
         answerCount++;
 
         return mBinding.getRoot();
