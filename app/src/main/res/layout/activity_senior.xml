@@ -5,11 +5,16 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
-    <fragment
+
+    <!--<fragment-->
+        <!--android:id="@+id/senior_fragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.Senior.YesNoFragment"/>-->
+    <FrameLayout
         android:id="@+id/senior_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.Senior.YesNoFragment"/>
+        android:layout_height="match_parent"></FrameLayout>
 
 </LinearLayout>
 </layout>

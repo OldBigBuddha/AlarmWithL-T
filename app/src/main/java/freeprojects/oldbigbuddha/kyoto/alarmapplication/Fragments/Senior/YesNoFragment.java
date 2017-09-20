@@ -25,6 +25,8 @@ public class YesNoFragment extends Fragment {
 
     private int answerCount = 0;
 
+    private boolean isSeniorMode;
+
     private OnSelectedAnswerListener mListener;
     public interface OnSelectedAnswerListener {
         // TODO 列挙型管理
@@ -45,23 +47,13 @@ public class YesNoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_yes_no, container, false);
+        initOnClick();
 
-        mBinding.btYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onSelectedYes( getArguments().getBoolean( getString(R.string.key_is_senior_mode), true ) );
-            }
-        });
-        mBinding.btNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onSelectedNo();
-            }
-        });
+        Bundle args  = getArguments();
+        isSeniorMode = args.getBoolean( getString(R.string.key_is_senior_mode), true );
+        mQuestions   = args.getStringArrayList(getString(R.string.key_questions));
 
-        Bundle args = getArguments();
-        mQuestions = args.getStringArrayList(getString(R.string.key_questions));
-        if (args.getStringArray( getString(R.string.key_answers) ) != null) {
+        if (args.getStringArrayList(getString(R.string.key_answers) ) != null) {
             mAnswers = args.getStringArrayList( getString(R.string.key_answers) );
         } else {
             mAnswers.add("はい");
@@ -74,6 +66,22 @@ public class YesNoFragment extends Fragment {
         answerCount++;
 
         return mBinding.getRoot();
+    }
+
+    private void initOnClick() {
+        mBinding.btYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onSelectedYes( isSeniorMode );
+            }
+        });
+        mBinding.btNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onSelectedNo();
+            }
+        });
+
     }
 
 }

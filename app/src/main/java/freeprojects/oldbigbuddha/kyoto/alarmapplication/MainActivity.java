@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.IdRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,15 +15,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences mConfig;
-
-    private ArrayList<String> mQuestions;
     
     private ActivityMainBinding mBinding;
 
@@ -34,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         mConfig = getSharedPreferences( getString(R.string.key_config), MODE_PRIVATE );
         SharedPreferences.Editor editor = mConfig.edit();
 
-        if (!(mConfig.getBoolean( getString(R.string.key_is_senior_mode), false ))) {
+        if (mConfig.getBoolean( getString(R.string.key_is_senior_mode), false )) {
             editor.putBoolean( getString(R.string.key_is_senior_mode), true );
             editor.commit();
 
@@ -64,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (!getIntent().getBooleanExtra("isPermit", true)) {
             Snackbar.make( mBinding.linearMain, getString( R.string.no_permission ), Snackbar.LENGTH_SHORT ).show();
+        } else if (getIntent().getBooleanExtra("none", false)) {
+            Snackbar.make( mBinding.linearMain, "未実装です", Snackbar.LENGTH_SHORT ).show();
         }
     }
 
@@ -73,12 +71,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goSenior() {
-        mQuestions = new ArrayList<>();
-        mQuestions.add("お年寄りモードを使いますか？");
+        ArrayList<String> questions = new ArrayList<>();
+        questions.add("お年寄りモードを使いますか？");
 
         Intent intent = new Intent( this, SeniorActivity.class );
         Bundle args   = new Bundle();
-        args.putStringArrayList(getString(R.string.key_questions), mQuestions);
+        args.putStringArrayList(getString(R.string.key_questions), questions);
         intent.putExtras(args);
         startActivity(intent);
     }

@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.view.LayoutInflater;
 
 import java.util.Calendar;
@@ -15,7 +15,7 @@ import freeprojects.oldbigbuddha.kyoto.alarmapplication.R;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.FragmentDialogTimeBinding;
 
 /**
- * Created by lifeistech on 2017/08/02.
+ * Created by BigBuddha on 2017/08/02.
  */
 
 public class TimeDialogFragment extends DialogFragment{

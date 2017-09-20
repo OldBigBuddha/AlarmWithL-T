@@ -2,6 +2,7 @@ package freeprojects.oldbigbuddha.kyoto.alarmapplication;
 
 
 import android.Manifest;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -49,10 +50,13 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
         Intent intent = getIntent();
-        mFragment = (SettingFragment)getSupportFragmentManager().findFragmentById(R.id.setting_fragment);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        mFragment = new SettingFragment();
         if ( intent.getStringExtra( getString( R.string.key_title ) ) != null ) {
             mFragment.setArguments(intent.getExtras());
         }
+        transaction.add(R.id.setting_fragment, mFragment);
+        transaction.commit();
 
         initToolbar();
         mRealm = Realm.getDefaultInstance(); // Initialize Realm

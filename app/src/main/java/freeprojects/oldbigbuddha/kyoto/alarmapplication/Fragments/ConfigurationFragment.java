@@ -54,7 +54,6 @@ public class ConfigurationFragment extends PreferenceFragment {
                         boolean isChecked = (boolean)o;
                         mEditor.putBoolean( getString(R.string.key_is_senior_mode), isChecked );
                         mEditor.commit();
-                        Log.d("OnChangeSenior", "isChecked = " + isChecked);
                         goSenior();
 
                         return true;
