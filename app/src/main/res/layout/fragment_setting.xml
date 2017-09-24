@@ -16,7 +16,7 @@
             android:paddingRight="24dp">
 
             <EditText
-                android:id="@+id/etTitle"
+                android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/title"
@@ -31,7 +31,7 @@
             android:paddingRight="24dp">
 
             <EditText
-                android:id="@+id/etContext"
+                android:id="@+id/et_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/content"
@@ -93,15 +93,13 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical">
 
-                        <fragment
+                        <FrameLayout
                             android:id="@+id/place_autocomplete_fragment"
-                            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
-                        <fragment
+                        <FrameLayout
                             android:id="@+id/google_map_fragment"
-                            android:name="freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.CustomMapFragment"
                             android:layout_width="match_parent"
                             android:layout_height="200dp" />
                     </LinearLayout>

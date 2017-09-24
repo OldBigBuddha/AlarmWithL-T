@@ -40,6 +40,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
@@ -107,26 +108,12 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
 
         if (getArguments() != null) {
-            isEditing = true;
-            mData = new AlarmRealmData(
-                    getArguments().getString( getString(R.string.key_title)),
-                    getArguments().getString( getString(R.string.key_content)),
-                    getArguments().getString( getString(R.string.key_created_data))
-            );
-            mData.setLocation( getArguments().getBoolean( getString(R.string.key_is_location) ) );
-            if (mData.isLocation()) {
-                mTargetLocation = new LatLng( getArguments().getDouble( getString(R.string.key_latitude) ), getArguments().getDouble( getString(R.string.key_longitude) ) );
-            }
-            long data = getArguments().getLong( getString(R.string.key_data) );
-            if (data != 0) {
-                mData.setDate( new Date(data) );
-                mSchedule.setTime( mData.getDate() );
-            }
-
+            settingData(getArguments());
         } else {
             mData = null;
         }
 
+        MapsInitializer.initialize(getActivity().getApplicationContext());
     }
 
     @Override
@@ -135,10 +122,6 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         // Inflate the layout for this fragment
         Log.d("config", "onCreateView");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false);
-        if (mData != null) {
-            mBinding.etTitle.setText( mData.getTitle() );
-            mBinding.etContext.setText( mData.getContent() );
-        }
         return mBinding.getRoot();
     }
 
@@ -148,7 +131,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
 
         if (mData != null) {
             mBinding.etTitle.setText(mData.getTitle());
-            mBinding.etContext.setText(mData.getContent());
+            mBinding.etContent.setText(mData.getContent());
         }
 
         mBinding.tvDate.setText(formatDate());
@@ -218,6 +201,24 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
         });
     }
 
+    private void settingData(Bundle args) {
+        isEditing = true;
+        mData = new AlarmRealmData(
+                args.getString( getString(R.string.key_title)),
+                args.getString( getString(R.string.key_content)),
+                args.getString( getString(R.string.key_created_data))
+        );
+        mData.setLocation( args.getBoolean( getString(R.string.key_is_location) ) );
+        if (mData.isLocation()) {
+            mTargetLocation = new LatLng( args.getDouble( getString(R.string.key_latitude) ), args.getDouble( getString(R.string.key_longitude) ) );
+        }
+        long data = args.getLong( getString(R.string.key_data) );
+        if (data != 0) {
+            mData.setDate( new Date(data) );
+            mSchedule.setTime( mData.getDate() );
+        }
+    }
+
     private void makeMarker(String name) {
         markerRemove();
         mMarkerOptions.position(mTargetLocation);
@@ -273,11 +274,11 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
     // Pass AlarmData to Activity
     public AlarmRealmData getAlarmData() {
         Log.d(TAG, "isData=" + isDate + ",isLocation=" + isLocation);
-        if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContext.getText())) { //Checking empty
+        if (!TextUtils.isEmpty(mBinding.etTitle.getText()) && !TextUtils.isEmpty(mBinding.etContent.getText())) { //Checking empty
 
             if (!isEditing) {
                 try {
-                    makeDate(mBinding.etTitle.getText().toString(), mBinding.etContext.getText().toString(), System.currentTimeMillis());
+                    makeDate(mBinding.etTitle.getText().toString(), mBinding.etContent.getText().toString(), System.currentTimeMillis());
                 } catch (NullPointerException e) {
                     return null;
                 }
@@ -295,7 +296,7 @@ public class SettingFragment extends Fragment implements PlaceSelectionListener,
             Snackbar snackbar = Snackbar.make(mBinding.parent, getString(R.string.message_error_null_title), Snackbar.LENGTH_SHORT);
             snackbar.show();
 
-        } else if (TextUtils.isEmpty(mBinding.etContext.getText())) {
+        } else if (TextUtils.isEmpty(mBinding.etContent.getText())) {
             Snackbar snackbar = Snackbar.make(mBinding.parent, getString(R.string.message_error_null_context), Snackbar.LENGTH_SHORT);
             snackbar.show();
         }

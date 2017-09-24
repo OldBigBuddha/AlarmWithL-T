@@ -20,7 +20,7 @@ import android.view.MenuItem;
 
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.Fragments.SettingFragment;
 import freeprojects.oldbigbuddha.kyoto.alarmapplication.POJO.AlarmRealmData;
-import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityNewCreateBinding;
+import freeprojects.oldbigbuddha.kyoto.alarmapplication.databinding.ActivityFormBinding;
 import io.realm.Realm;
 
 public class FormActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
@@ -28,7 +28,7 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
     private final String TAG = getClass().getSimpleName();
     private final int REQUEST_CODE_ACCESS_FINE_LOCATION = 1;
 
-    private ActivityNewCreateBinding mBinding;
+    private ActivityFormBinding mBinding;
     private SettingFragment mFragment;
 
     private Realm mRealm;
@@ -48,7 +48,7 @@ public class FormActivity extends AppCompatActivity implements ActivityCompat.On
 
         checkPermission();
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_create);  //Binding Layout
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_form);  //Binding Layout
         Intent intent = getIntent();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         mFragment = new SettingFragment();
